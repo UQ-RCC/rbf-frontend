@@ -41,6 +41,6 @@
     "angular-scenario": "~1.6.5"
   },
   "resolutions": {
-    "angular": "1.7.9"
+    "angular": "1.6.10"
   }
 }
