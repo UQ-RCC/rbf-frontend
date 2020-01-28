@@ -215,7 +215,7 @@ angular
                       return data;
                     }
                   }).catch(function() {
-                    console.log('unable to load structure ArchObj');
+                    //console.log('unable to load structure ArchObj');
                   });
                   promises.push(promise);
                 });

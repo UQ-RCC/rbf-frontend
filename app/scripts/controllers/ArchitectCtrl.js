@@ -12,7 +12,7 @@ angular.module('qldarchApp').controller('ArchitectCtrl', function($scope, archit
           architectId : data.id
         });
       }).catch(function(error) {
-        console.log('Failed to save', error);
+        //console.log('Failed to save', error);
         $state.go('architect.summary.edit', {
           architectId : data.id
         });
@@ -23,7 +23,7 @@ angular.module('qldarchApp').controller('ArchitectCtrl', function($scope, archit
           architectId : response.id
         });
       }).catch(function(error) {
-        console.log('Failed to save', error);
+        //console.log('Failed to save', error);
         $state.go('architect.summary.edit', {
           architectId : data.id
         });

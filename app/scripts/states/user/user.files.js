@@ -10,7 +10,7 @@ angular.module('qldarchApp').config(function($stateProvider) {
         return $http.get(Uris.WS_ROOT + 'media/owned', {
           withCredentials : true
         }).then(function(result) {
-          console.log('load media owned by current user');
+          //console.log('load media owned by current user');
           return result.data;
         });
       } ]

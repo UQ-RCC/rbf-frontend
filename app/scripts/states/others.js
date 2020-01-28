@@ -9,7 +9,7 @@ angular.module('qldarchApp').config(function($stateProvider) {
         return AggArchObjs.loadPersonNotArchitect().then(function(data) {
           return data;
         }).catch(function() {
-          console.log('unable to load person non-architect');
+          //console.log('unable to load person non-architect');
           return {};
         });
       } ],
@@ -17,7 +17,7 @@ angular.module('qldarchApp').config(function($stateProvider) {
         return AggArchObjs.loadOthersNotPerson().then(function(data) {
           return data;
         }).catch(function() {
-          console.log('unable to load others non-person');
+          //console.log('unable to load others non-person');
           return {};
         });
       } ],

@@ -13,7 +13,7 @@ angular.module('qldarchApp').config(
                 return architect.label && !(/\s/.test(architect.label.substring(0, 1)));
               });
             }).catch(function() {
-              console.log('unable to load all architects');
+              //console.log('unable to load all architects');
               return {};
             });
           } ],
@@ -23,7 +23,7 @@ angular.module('qldarchApp').config(
                 return firm.label && !(/\s/.test(firm.label.substring(0, 1)));
               });
             }).catch(function() {
-              console.log('unable to load all firms');
+              //console.log('unable to load all firms');
               return {};
             });
           } ],
@@ -31,7 +31,7 @@ angular.module('qldarchApp').config(
             return AggArchObjs.loadProjects().then(function(data) {
               return data;
             }).catch(function() {
-              console.log('unable to load all projects');
+              //console.log('unable to load all projects');
               return {};
             });
           } ],
@@ -39,7 +39,7 @@ angular.module('qldarchApp').config(
             return AggArchObjs.loadPersonNotArchitect().then(function(data) {
               return data;
             }).catch(function() {
-              console.log('unable to load person non-architect');
+              //console.log('unable to load person non-architect');
               return {};
             });
           } ],
@@ -47,7 +47,7 @@ angular.module('qldarchApp').config(
             return AggArchObjs.loadOthersNotPerson().then(function(data) {
               return data;
             }).catch(function() {
-              console.log('unable to load others non-person');
+              //console.log('unable to load others non-person');
               return {};
             });
           } ],

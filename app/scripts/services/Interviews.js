@@ -13,7 +13,7 @@ angular.module('qldarchApp').factory('Interviews', function(AggArchObjs, GraphHe
       });
       return interviews;
     }).catch(function() {
-      console.log('unable to load interviews');
+      //console.log('unable to load interviews');
       return {};
     });
   }

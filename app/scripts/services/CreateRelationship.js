@@ -41,11 +41,11 @@ angular.module('qldarchApp').factory('CreateRelationship', function($http, Uris,
       }).then(function(response) {
         angular.extend(data, response.data);
         // toaster.pop('success', 'Relationship added');
-        console.log('created relationship id: ' + data.id);
+        //console.log('created relationship id: ' + data.id);
         return data;
       }, function(response) {
         toaster.pop('error', 'Error occured', response.data.msg);
-        console.log('error message: ' + response.data.msg);
+        //console.log('error message: ' + response.data.msg);
       });
     }
   };

@@ -60,11 +60,11 @@ angular.module('qldarchApp').factory('File', function(Uris, $upload, $http, toas
       }).then(function(response) {
         angular.extend(data, response.data);
         toaster.pop('success', data.filename + ' updated');
-        console.log('updated media id: ' + data.id);
+        //console.log('updated media id: ' + data.id);
         return data;
       }, function(response) {
         toaster.pop('error', 'Error occured', response.data.msg);
-        console.log('error message: ' + response.data.msg);
+        //console.log('error message: ' + response.data.msg);
       });
     },
 
@@ -73,11 +73,11 @@ angular.module('qldarchApp').factory('File', function(Uris, $upload, $http, toas
         withCredentials : true
       }).then(function(response) {
         toaster.pop('success', response.data.filename + ' preferred');
-        console.log('preferred media id: ' + response.data.id);
+        //console.log('preferred media id: ' + response.data.id);
         return response.data;
       }, function(response) {
         toaster.pop('error', 'Error occured', response.data.msg);
-        console.log('error message: ' + response.data.msg);
+        //console.log('error message: ' + response.data.msg);
       });
     },
 
@@ -86,11 +86,11 @@ angular.module('qldarchApp').factory('File', function(Uris, $upload, $http, toas
         withCredentials : true
       }).then(function(response) {
         toaster.pop('success', response.data.filename + ' deleted');
-        console.log('deleted media id: ' + response.data.id);
+        //console.log('deleted media id: ' + response.data.id);
         return response.data;
       }, function(response) {
         toaster.pop('error', 'Error occured', response.data.msg);
-        console.log('error message: ' + response.data.msg);
+        //console.log('error message: ' + response.data.msg);
       });
     }
   };

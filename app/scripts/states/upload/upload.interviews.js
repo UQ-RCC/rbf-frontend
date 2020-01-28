@@ -11,7 +11,7 @@ angular.module('qldarchApp').config(function($stateProvider) {
           return ArchObj.loadInterviewObj($stateParams.id).then(function(data) {
             return data;
           }).catch(function() {
-            console.log('unable to load interview ArchObj with relationship labels');
+            //console.log('unable to load interview ArchObj with relationship labels');
             return {};
           });
         }
@@ -22,7 +22,7 @@ angular.module('qldarchApp').config(function($stateProvider) {
             return architect.label && !(/\s/.test(architect.label.substring(0, 1)));
           });
         }).catch(function() {
-          console.log('unable to load architects');
+          //console.log('unable to load architects');
           return {};
         });
       } ],
@@ -30,7 +30,7 @@ angular.module('qldarchApp').config(function($stateProvider) {
         return AggArchObjs.loadPersonNotArchitect().then(function(data) {
           return data;
         }).catch(function() {
-          console.log('unable to load person non-architect');
+          //console.log('unable to load person non-architect');
           return {};
         });
       } ]

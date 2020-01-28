@@ -38,7 +38,7 @@ angular.module('qldarchApp').controller('FirmCtrl', function($scope, $filter, fi
           firmId : data.id
         });
       }).catch(function(error) {
-        console.log('Failed to save', error);
+        //console.log('Failed to save', error);
         $state.go('firm.summary.edit', {
           firmId : data.id
         });
@@ -49,7 +49,7 @@ angular.module('qldarchApp').controller('FirmCtrl', function($scope, $filter, fi
           firmId : data.id
         });
       }).catch(function(error) {
-        console.log('Failed to save', error);
+        //console.log('Failed to save', error);
         $state.go('firm.summary.edit', {
           firmId : data.id
         });

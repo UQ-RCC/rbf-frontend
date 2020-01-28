@@ -44,11 +44,11 @@ angular.module('qldarchApp').controller('UploadDocumentsCtrl', function($scope, 
           expression.$uploadFile.percent = parseInt(100.0 * evt.loaded / evt.total);
         }).success(function() {
           expression.$uploadFile.isComplete = expression.$uploadFile.percent === 100;
-          console.log('article file upload succeeded');
+          //console.log('article file upload succeeded');
           goToArticles();
         }).error(function(err) {
           toaster.pop('error', 'Error occured', err.data.msg);
-          console.log('article file upload failed: ' + err.data.msg);
+          //console.log('article file upload failed: ' + err.data.msg);
           var index = $scope.expressions.indexOf(expression);
           $scope.expressions.splice(index, 1);
         });

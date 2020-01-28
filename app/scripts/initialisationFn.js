@@ -29,7 +29,7 @@ angular.module('qldarchApp').run(function($rootScope, $route, $location, ngProgr
     if (status.data.id) {
       Auth.success = true;
       Auth.user = status.data;
-      console.log('Auth is', status.data.username);
+      //console.log('Auth is', status.data.username);
     }
   });
 
@@ -37,8 +37,8 @@ angular.module('qldarchApp').run(function($rootScope, $route, $location, ngProgr
   $rootScope.globalSearch.query = '';
 
   // Adds the slim progress bar
-  $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
-    console.log('changing', event, toState, toParams, fromState, fromParams);
+  $rootScope.$on('$stateChangeStart', function(/*event, toState, toParams, fromState, fromParams*/) {
+    //console.log('changing', event, toState, toParams, fromState, fromParams);
     ngProgress.reset();
     ngProgress.color('#ea1d5d');
     ngProgress.start();
@@ -105,7 +105,7 @@ angular.module('qldarchApp').run(function($rootScope, $route, $location, ngProgr
       $location.search('query', $item.query);
     } else {
       // already a result
-      console.log('path is', $item.type);
+      //console.log('path is', $item.type);
       var params = {};
       if ($item.type === 'person' && $item.architect === true) {
         params.architectId = $item.id;

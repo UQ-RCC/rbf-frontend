@@ -1,6 +1,6 @@
 'use strict';
 
-console.log('bootstrapping angularjs now');
+//console.log('bootstrapping angularjs now');
 angular.bootstrap(document, [ 'qldarchApp' ]);
 
 google.charts.load('current', {

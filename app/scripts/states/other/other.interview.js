@@ -13,7 +13,7 @@ angular.module('qldarchApp').config(function($stateProvider) {
         return ArchObj.loadInterviewObj($stateParams.interviewId).then(function(data) {
           return data;
         }).catch(function() {
-          console.log('unable to load interview ArchObj with relationship labels');
+          //console.log('unable to load interview ArchObj with relationship labels');
           return {};
         });
       } ],
@@ -26,7 +26,7 @@ angular.module('qldarchApp').config(function($stateProvider) {
         return AggArchObjs.loadPersonNotArchitect().then(function(data) {
           return data;
         }).catch(function() {
-          console.log('unable to load person non-architect');
+          //console.log('unable to load person non-architect');
           return {};
         });
       } ],
@@ -34,7 +34,7 @@ angular.module('qldarchApp').config(function($stateProvider) {
         return AggArchObjs.loadOthersNotPerson().then(function(data) {
           return data;
         }).catch(function() {
-          console.log('unable to load others non-person');
+          //console.log('unable to load others non-person');
           return {};
         });
       } ],
@@ -48,7 +48,7 @@ angular.module('qldarchApp').config(function($stateProvider) {
           });
           return data;
         }).catch(function() {
-          console.log('unable to load architects');
+          //console.log('unable to load architects');
           return {};
         });
       } ],
@@ -59,7 +59,7 @@ angular.module('qldarchApp').config(function($stateProvider) {
           });
           return data;
         }).catch(function() {
-          console.log('unable to load firms');
+          //console.log('unable to load firms');
           return {};
         });
       } ],
@@ -70,7 +70,7 @@ angular.module('qldarchApp').config(function($stateProvider) {
           });
           return data;
         }).catch(function() {
-          console.log('unable to load projects');
+          //console.log('unable to load projects');
           return {};
         });
       } ],

@@ -65,7 +65,7 @@ angular.module('qldarchApp').config(function($stateProvider) {
           });
           return response.data;
         }, function(response) {
-          console.log('error message: ' + response.data.msg);
+          //console.log('error message: ' + response.data.msg);
         });
       } ]
     },

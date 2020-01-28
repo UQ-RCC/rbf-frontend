@@ -8,7 +8,7 @@ angular.module('qldarchApp').service('RelationshipLabels', function Relationship
         url : Uris.WS_ROOT + 'relationship/labels',
         cache : true
       }).then(function(result) {
-        console.log('load relationship labels');
+        //console.log('load relationship labels');
         return result.data;
       });
     }

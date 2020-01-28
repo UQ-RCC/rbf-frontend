@@ -8,7 +8,7 @@ angular.module('qldarchApp').service('BuildingTypologies', function BuildingTypo
         url : Uris.WS_ROOT + 'buildingtypologies',
         cache : true
       }).then(function(result) {
-        console.log('load building typologies');
+        //console.log('load building typologies');
         return result.data;
       });
     }

@@ -54,7 +54,7 @@ angular.module('qldarchApp').controller('AdminChangesLogCtrl', function($scope, 
       });
       $scope.chgslog.changesLog = response.data;
     }, function(response) {
-      console.log('error message: ' + response.data.msg);
+      //console.log('error message: ' + response.data.msg);
     });
   };
 

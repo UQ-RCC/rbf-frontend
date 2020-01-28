@@ -16,7 +16,7 @@ angular.module('qldarchApp').config(function($stateProvider) {
             }, true);
             return data;
           }).catch(function() {
-            console.log('unable to load firm ArchObj with relationship labels');
+            //console.log('unable to load firm ArchObj with relationship labels');
             return {};
           });
         }
@@ -28,7 +28,7 @@ angular.module('qldarchApp').config(function($stateProvider) {
             return architect.label && !(/\s/.test(architect.label.substring(0, 1)));
           });
         }).catch(function() {
-          console.log('unable to load all architects');
+          //console.log('unable to load all architects');
           return {};
         });
       } ],
@@ -38,7 +38,7 @@ angular.module('qldarchApp').config(function($stateProvider) {
             return firm.label && !(/\s/.test(firm.label.substring(0, 1)));
           });
         }).catch(function() {
-          console.log('unable to load all firms');
+          //console.log('unable to load all firms');
           return {};
         });
       } ],
@@ -46,7 +46,7 @@ angular.module('qldarchApp').config(function($stateProvider) {
         return AggArchObjs.loadProjects().then(function(data) {
           return data;
         }).catch(function() {
-          console.log('unable to load all projects');
+          //console.log('unable to load all projects');
           return {};
         });
       } ]

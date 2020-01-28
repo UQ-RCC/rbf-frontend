@@ -12,7 +12,7 @@ angular.module('qldarchApp').config(function($stateProvider) {
             return firm.australian === false && (firm.label && !(/\s/.test(firm.label.substring(0, 1))));
           });
         }).catch(function() {
-          console.log('unable to load other firms');
+          //console.log('unable to load other firms');
           return {};
         });
       } ],

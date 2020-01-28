@@ -13,7 +13,7 @@ angular.module('qldarchApp').config(function($stateProvider) {
             return architect.practicedinqueensland === true && (architect.label && !(/\s/.test(architect.label.substring(0, 1))));
           });
         }).catch(function() {
-          console.log('unable to load qld architects');
+          //console.log('unable to load qld architects');
           return {};
         });
       } ],

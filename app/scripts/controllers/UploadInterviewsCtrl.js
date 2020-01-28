@@ -76,11 +76,11 @@ angular.module('qldarchApp').controller('UploadInterviewsCtrl',
           $scope.expAudio.$uploadFile.percent = parseInt(100.0 * evt.loaded / evt.total);
         }).success(function(res) {
           $scope.expAudio.$uploadFile.isComplete = $scope.expAudio.$uploadFile.percent === 100;
-          console.log('audio file upload succeeded');
+          //console.log('audio file upload succeeded');
           return res;
         }).error(function(err) {
           toaster.pop('error', 'Error occured', err.data.msg);
-          console.log('audio file upload failed: ' + err.data.msg);
+          //console.log('audio file upload failed: ' + err.data.msg);
           return err;
         });
       }
@@ -98,11 +98,11 @@ angular.module('qldarchApp').controller('UploadInterviewsCtrl',
           $scope.expTranscript.$uploadFile.percent = parseInt(100.0 * evt.loaded / evt.total);
         }).success(function(res) {
           $scope.expTranscript.$uploadFile.isComplete = $scope.expTranscript.$uploadFile.percent === 100;
-          console.log('transcript file upload succeeded');
+          //console.log('transcript file upload succeeded');
           return res;
         }).error(function(err) {
           toaster.pop('error', 'Error occured', err.data.msg);
-          console.log('transcript file upload failed: ' + err.data.msg);
+          //console.log('transcript file upload failed: ' + err.data.msg);
           return err;
         });
       }

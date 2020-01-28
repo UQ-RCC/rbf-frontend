@@ -25,7 +25,7 @@ angular.module('qldarchApp').controller('ArticleCtrl', function($scope, article,
           articleId : data.id
         });
       }).catch(function(error) {
-        console.log('Failed to save', error);
+        //console.log('Failed to save', error);
         $state.go('article.edit', {
           articleId : data.id
         });
@@ -36,7 +36,7 @@ angular.module('qldarchApp').controller('ArticleCtrl', function($scope, article,
           articleId : response.id
         });
       }).catch(function(error) {
-        console.log('Failed to save', error);
+        //console.log('Failed to save', error);
         $state.go('article.edit', {
           articleId : data.id
         });

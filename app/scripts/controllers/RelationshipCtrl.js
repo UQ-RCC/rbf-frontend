@@ -117,11 +117,11 @@ angular.module('qldarchApp').controller(
             var index = $scope.selectedRelationships.indexOf(relationship);
             $scope.selectedRelationships.splice(index, 1);
             toaster.pop('success', 'Relationship deleted');
-            console.log('deleted relationship id: ' + response.data.id);
+            //console.log('deleted relationship id: ' + response.data.id);
             return response.data;
           }, function(response) {
             toaster.pop('error', 'Error occured', response.data.msg);
-            console.log('error message: ' + response.data.msg);
+            //console.log('error message: ' + response.data.msg);
           });
         }
       };

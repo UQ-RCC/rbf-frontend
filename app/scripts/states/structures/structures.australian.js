@@ -14,7 +14,7 @@ angular.module('qldarchApp').config(function($stateProvider) {
             }
           });
         }).catch(function() {
-          console.log('unable to load australian projects');
+          //console.log('unable to load australian projects');
           return {};
         });
       } ]

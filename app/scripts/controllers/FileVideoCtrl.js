@@ -85,12 +85,12 @@ angular.module('qldarchApp').controller('FileVideoCtrl',
             expression.$uploadFile.percent = parseInt(100.0 * evt.loaded / evt.total);
           }).success(function() {
             expression.$uploadFile.isComplete = expression.$uploadFile.percent === 100;
-            console.log('video file upload succeeded');
+            //console.log('video file upload succeeded');
             goToVideos();
           }).error(function(err) {
             // Something went wrong uploading the file
             toaster.pop('error', 'Error occured', err.data.msg);
-            console.log('video file upload failed');
+            //console.log('video file upload failed');
             var index = $scope.expressions.indexOf(expression);
             $scope.expressions.splice(index, 1);
           });

@@ -63,11 +63,11 @@ angular.module('qldarchApp').factory('CompObj', function($http, $cacheFactory, U
         data : payload
       }).then(function(response) {
         toaster.pop('success', response.data.title + ' created');
-        console.log('created compound object id: ' + response.data.id);
+        //console.log('created compound object id: ' + response.data.id);
         return response.data;
       }, function(response) {
         toaster.pop('error', 'Error occured', response.data.msg);
-        console.log('error message: ' + response.data.msg);
+        //console.log('error message: ' + response.data.msg);
       });
     },
 
@@ -76,31 +76,31 @@ angular.module('qldarchApp').factory('CompObj', function($http, $cacheFactory, U
         withCredentials : true
       }).then(function(response) {
         toaster.pop('success', 'Compound object deleted');
-        console.log('deleted compound object id: ' + response.data.id);
+        //console.log('deleted compound object id: ' + response.data.id);
         return response.data;
       }, function(response) {
         toaster.pop('error', 'Error occured', response.data.msg);
-        console.log('error message: ' + response.data.msg);
+        //console.log('error message: ' + response.data.msg);
       });
     },
 
     loadAll : function() {
       return $http.get(Uris.WS_ROOT + 'compobjs/all').then(function(result) {
-        console.log('load all compound objects');
+        //console.log('load all compound objects');
         return result.data;
       }, function(response) {
         toaster.pop('error', 'Error occured', response.data.msg);
-        console.log('error message: ' + response.data.msg);
+        //console.log('error message: ' + response.data.msg);
       });
     },
 
     load : function(id) {
       return $http.get(path + id).then(function(result) {
-        console.log('load compound object id: ' + id);
+        //console.log('load compound object id: ' + id);
         return result.data;
       }, function(response) {
         toaster.pop('error', 'Error occured', response.data.msg);
-        console.log('error message: ' + response.data.msg);
+        //console.log('error message: ' + response.data.msg);
       });
     }
   };

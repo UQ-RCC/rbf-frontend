@@ -63,8 +63,8 @@ angular.module('qldarchApp').controller(
       $scope.isSearching = false;
 
       function scrollToTime(time, duration) {
-        console.log('scrolling to time!');
-        console.log(time);
+        //console.log('scrolling to time!');
+        //console.log(time);
         if (!duration) {
           duration = 2000;
         }
@@ -92,13 +92,13 @@ angular.module('qldarchApp').controller(
         $scope.startTime = $stateParams.time;
         angular.forEach(interview.transcript, function(exchange, index) {
           if (exchange.startTime.toString() === $stateParams.time.toString()) {
-            console.log('once');
+            //console.log('once');
             $scope.exchangeDisplayCount = index + 20;
           }
         });
         setTimeout(function() {
           scrollToTime($stateParams.time, 2000);
-          console.log('there is a time', $stateParams.time);
+          //console.log('there is a time', $stateParams.time);
         }, 0);
       } else {
         $scope.exchangeDisplayCount = exchangeDisplayCountDefault;
@@ -255,7 +255,7 @@ angular.module('qldarchApp').controller(
        */
       $scope.playFromExchange = function(exchange) {
         $scope.player.pause();
-        console.log('play from exchange');
+        //console.log('play from exchange');
         jQuery('html, body').animate({
           scrollTop : jQuery('.player').offset().top + 'px'
         }, 500, 'swing', function() {
@@ -391,11 +391,11 @@ angular.module('qldarchApp').controller(
             text : interview.interviewee[0].label
           };
           toaster.pop('success', 'Interview relationship created');
-          console.log('created interview relationship id: ' + response.data.id);
+          //console.log('created interview relationship id: ' + response.data.id);
           return response.data;
         }, function(response) {
           toaster.pop('error', 'Error occured', response.data.msg);
-          console.log('error message: ' + response.data.msg);
+          //console.log('error message: ' + response.data.msg);
         });
       };
 
@@ -417,11 +417,11 @@ angular.module('qldarchApp').controller(
             var index = exchange.relationships.indexOf(response.data);
             exchange.relationships.splice(index, 1);
             toaster.pop('success', 'Interview relationship deleted');
-            console.log('deleted interview relationship id: ' + response.data.id);
+            //console.log('deleted interview relationship id: ' + response.data.id);
             return response.data;
           }, function(response) {
             toaster.pop('error', 'Error occured', response.data.msg);
-            console.log('error message: ' + response.data.msg);
+            //console.log('error message: ' + response.data.msg);
           });
         }
       };
@@ -441,11 +441,11 @@ angular.module('qldarchApp').controller(
           }).then(function(response) {
             delete interview.transcript;
             toaster.pop('success', 'Transcript deleted', response.data.label + ' transcript deleted');
-            console.log('deleted transcript for interview id: ' + response.data.id);
+            //console.log('deleted transcript for interview id: ' + response.data.id);
             return response.data;
           }, function(response) {
             toaster.pop('error', 'Error occured', response.data.msg);
-            console.log('error message: ' + response.data.msg);
+            //console.log('error message: ' + response.data.msg);
           });
         }
       };

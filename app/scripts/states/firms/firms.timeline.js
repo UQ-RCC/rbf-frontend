@@ -16,7 +16,7 @@ angular.module('qldarchApp').config(function($stateProvider) {
             }
           });
         }).catch(function() {
-          console.log('unable to load firms');
+          //console.log('unable to load firms');
           return {};
         });
       } ]

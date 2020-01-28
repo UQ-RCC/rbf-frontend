@@ -19,7 +19,7 @@ angular.module('qldarchApp').factory('InterviewsBrief', function(AggArchObjs) {
         return typeof interview.media !== 'undefined';
       }));
     }).catch(function() {
-      console.log('unable to load interviews brief');
+      //console.log('unable to load interviews brief');
       return {};
     });
   }

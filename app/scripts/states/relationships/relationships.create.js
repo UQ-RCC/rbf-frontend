@@ -19,7 +19,7 @@ angular.module('qldarchApp').config(function($stateProvider) {
             return architect.label && !(/\s/.test(architect.label.substring(0, 1)));
           });
         }).catch(function() {
-          console.log('unable to load architects');
+          //console.log('unable to load architects');
           return {};
         });
       } ],
@@ -32,7 +32,7 @@ angular.module('qldarchApp').config(function($stateProvider) {
             return firm.label && !(/\s/.test(firm.label.substring(0, 1)));
           });
         }).catch(function() {
-          console.log('unable to load firms');
+          //console.log('unable to load firms');
           return {};
         });
       } ],
@@ -43,7 +43,7 @@ angular.module('qldarchApp').config(function($stateProvider) {
           });
           return data;
         }).catch(function() {
-          console.log('unable to load projects');
+          //console.log('unable to load projects');
           return {};
         });
       } ],

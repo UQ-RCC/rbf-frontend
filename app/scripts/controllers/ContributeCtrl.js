@@ -14,7 +14,7 @@ angular.module('qldarchApp').controller(
 
       $scope.setRecaptchaResponse = function(response) {
         $scope.recaptchaResponse = response;
-        console.log('Response available: %s', response);
+        //console.log('Response available: %s', response);
         if ($scope.recaptchaResponse) {
           toaster.pop('success', 'Success', 'You have successfully validate reCAPTCHA. Next step is to complete and/or submit the form.');
         }
@@ -22,14 +22,14 @@ angular.module('qldarchApp').controller(
 
       $scope.setRecaptchaWidgetId = function(widgetId) {
         $scope.recaptchaWidgetId = widgetId;
-        console.log('Created widget ID: %s', widgetId);
+        //console.log('Created widget ID: %s', widgetId);
       };
 
       $scope.recaptchaCbExpiration = function() {
         vcRecaptchaService.reload($scope.widgetId);
         $scope.recaptchaResponse = null;
         toaster.pop('warning', 'Warning', 'reCAPTCHA has expired.');
-        console.log('Captcha expired. Resetting response object');
+        //console.log('Captcha expired. Resetting response object');
       };
 
       $scope.postMsg = function(msg) {
@@ -46,13 +46,13 @@ angular.module('qldarchApp').controller(
             var f = msg.from;
             if (!((!c || !c.length || !/\S/.test(c)) || (!fn || !fn.length || !/\S/.test(fn)) || (!ln || !ln.length || !/\S/.test(ln)) || (!f ||
                 !f.length || !/\S/.test(f)))) {
-              console.log('msg', msg);
+              //console.log('msg', msg);
               $http.post(Uris.WS_ROOT + 'message/contact', jQuery.param(msg) + '&g-recaptcha-response=' + $scope.recaptchaResponse, {
                 headers : {
                   'Content-Type' : 'application/x-www-form-urlencoded'
                 }
               }).then(function(response) {
-                console.log('response', response);
+                //console.log('response', response);
                 $state.go('main');
                 if (response.data.success) {
                   toaster.pop('success', 'Message Sent', 'You have successfully sent your message.');

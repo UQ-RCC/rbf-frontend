@@ -2,8 +2,6 @@
 
 angular.module('qldarchApp').config(function($urlRouterProvider, $httpProvider, $qProvider, $locationProvider) {
 
-  console.log('does this work?');
-
   $locationProvider.hashPrefix('');
   $locationProvider.html5Mode(true);
 
@@ -18,7 +16,7 @@ angular.module('qldarchApp').config(function($urlRouterProvider, $httpProvider, 
     return {
       responseError : function(rejection) {
         // do something on error
-        console.log('got a Response ERROR!', rejection);
+        //console.log('got a Response ERROR!', rejection);
         toaster.pop('warning', rejection.statusText, rejection.data.msg);
         return $q.reject(rejection);
       }

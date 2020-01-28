@@ -166,7 +166,7 @@ angular.module('qldarchApp').controller(
           promise = ArchObj.updateStructure(data).then(function(res) {
             return res;
           }).catch(function(error) {
-            console.log('Failed to save', error);
+            //console.log('Failed to save', error);
             $state.go('structure.summary.edit', {
               structureId : data.id
             });
@@ -177,7 +177,7 @@ angular.module('qldarchApp').controller(
           promise = ArchObj.createStructure(data).then(function(res) {
             return res;
           }).catch(function(error) {
-            console.log('Failed to save', error);
+            //console.log('Failed to save', error);
             $state.go('structure.summary.edit', {
               structureId : data.id
             });

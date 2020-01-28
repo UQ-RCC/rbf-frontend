@@ -9,7 +9,7 @@ angular.module('qldarchApp').config(function($stateProvider) {
         return AggArchObjs.loadArticles().then(function(data) {
           return data;
         }).catch(function() {
-          console.log('unable to load articles');
+          //console.log('unable to load articles');
           return {};
         });
       } ]

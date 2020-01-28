@@ -20,7 +20,7 @@ angular.module('qldarchApp').config(function($stateProvider) {
             }, true);
             return data;
           }).catch(function() {
-            console.log('unable to load structure ArchObj with relationship labels');
+            //console.log('unable to load structure ArchObj with relationship labels');
             return {};
           });
         }

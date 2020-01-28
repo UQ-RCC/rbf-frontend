@@ -57,7 +57,7 @@ angular.module('qldarchApp').controller('OtherCtrl', function($scope, $state, ot
           otherId : data.id
         });
       }).catch(function(error) {
-        console.log('Failed to save', error);
+        //console.log('Failed to save', error);
         $state.go('other.summary.edit', {
           otherId : data.id
         });
@@ -68,7 +68,7 @@ angular.module('qldarchApp').controller('OtherCtrl', function($scope, $state, ot
           otherId : data.id
         });
       }).catch(function(error) {
-        console.log('Failed to save', error);
+        //console.log('Failed to save', error);
         $state.go('other.summary.edit', {
           otherId : data.id
         });

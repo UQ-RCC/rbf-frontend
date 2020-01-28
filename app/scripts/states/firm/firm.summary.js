@@ -11,7 +11,7 @@ angular.module('qldarchApp').config(function($stateProvider) {
             return architect.label && !(/\s/.test(architect.label.substring(0, 1)));
           });
         }).catch(function() {
-          console.log('unable to load architects');
+          //console.log('unable to load architects');
           return {};
         });
       } ]

@@ -126,7 +126,7 @@ angular.module('qldarchApp').controller('WordCloudBuilderCtrl',
             promise = ArchObj.load(document.id).then(function(data) {
               return data;
             }).catch(function(response) {
-              console.log('unable to load interview ArchObj');
+              //console.log('unable to load interview ArchObj');
               return response;
             });
             promises.push(promise);
@@ -135,7 +135,7 @@ angular.module('qldarchApp').controller('WordCloudBuilderCtrl',
             promise = $http.get(Uris.WS_ROOT + 'media/text/' + document.id).then(function(result) {
               return result.data;
             }, function(response) {
-              console.log('error message: ' + response.data.msg);
+              //console.log('error message: ' + response.data.msg);
               return response.data;
             });
             promises.push(promise);

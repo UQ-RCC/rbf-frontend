@@ -13,7 +13,7 @@ angular.module('qldarchApp').config(function($stateProvider) {
           return ArchObj.loadWithRelationshipLabels($stateParams.otherId).then(function(data) {
             return data;
           }).catch(function() {
-            console.log('unable to load other ArchObj with relationship labels');
+            //console.log('unable to load other ArchObj with relationship labels');
             return {};
           });
         }
@@ -25,7 +25,7 @@ angular.module('qldarchApp').config(function($stateProvider) {
             ArchObj.load(interview).then(function(data) {
               interviews.push(data);
             }).catch(function() {
-              console.log('unable to load interview ArchObj');
+              //console.log('unable to load interview ArchObj');
               return {};
             });
           });

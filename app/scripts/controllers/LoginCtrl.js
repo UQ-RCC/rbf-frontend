@@ -15,13 +15,13 @@ angular.module('qldarchApp').controller('LoginCtrl', function($scope, Uris, $htt
       if (response.data.success) {
         Auth.clear();
         angular.extend(Auth, response.data);
-        console.log('going to main!');
+        //console.log('going to main!');
         $state.go('main');
       } else {
         toaster.pop('error', 'Error occured', 'Sorry, that email and/or password is incorrect');
       }
     }, function(error) {
-      console.log('failed to log in', error);
+      //console.log('failed to log in', error);
     });
   };
 });

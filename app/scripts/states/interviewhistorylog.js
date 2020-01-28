@@ -54,7 +54,7 @@ angular.module('qldarchApp').config(
               });
               return response.data;
             }, function(response) {
-              console.log('error message: ' + response.data.msg);
+              //console.log('error message: ' + response.data.msg);
             });
           } ]
         },
