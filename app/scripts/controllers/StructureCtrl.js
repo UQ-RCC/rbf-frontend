@@ -6,6 +6,25 @@ angular.module('qldarchApp').controller(
       /* globals $:false */
       $scope.structure = structure;
       $scope.designers = designers;
+      /*
+      $scope.toDate = function(datestr) {
+        if (!datestr) return;
+        var parts = datestr.split('-');
+        while (parts.length < 3) parts.unshift('01');
+        
+        return new Date(parts.reverse().join('-'));
+      };
+      */
+      (function(){
+        var completionpd = $scope.structure.completionpd;
+        var parts = $scope.structure.completion.split('-');
+        if (completionpd >= 365) {
+          parts.splice(1);
+        } else if (completionpd >= 28) {
+          parts.splice(2);
+        }
+        $scope._completion = parts.reverse().join('-');
+      })();
 
       firms = $filter('orderBy')(firms, function(firm) {
         return firm.label;
@@ -162,6 +181,23 @@ angular.module('qldarchApp').controller(
       $scope.updateStructure = function(data) {
         var promises = [];
         var promise;
+        (function(d){
+          if (!d) return;
+          //var yyyymmdd = d.replace(/\D*/g,'');
+          var parts = d.split('-');
+          // completionpd is a precision delta in days, eg:
+          // 0 means that the date is accurate to the date/day
+          // 30 means that the date is accurate to the month
+          if (parts.length === 3) {
+            data.completionpd = 0;
+          } else if (parts.length === 2) {
+            data.completionpd = (new Date(+parts[1], parts[0] - 1, 0)).getDate();
+          } else if (parts.length === 1) {
+            var y = +parts[2];
+            data.completionpd = (!(y%(y%25?4:16))) ? 366 : 365;
+          }
+          data.completion = parts.reverse().join('-');
+        })($scope._completion);
         if (data.id) {
           promise = ArchObj.updateStructure(data).then(function(res) {
             return res;

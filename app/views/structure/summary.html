@@ -52,7 +52,7 @@
         <p ng-show="structure.location.length">{{ structure.location }}</p>
         <p class="text-muted" ng-hide="structure.location.length">No location</p>
         <h5 style="margin-top: 24px;">Completion Date</h5>
-        <p ng-show="structure.completion.length">{{ structure.completion | date:'dd-MM-yyyy' }}</p>
+        <p ng-show="structure.completion.length">{{ _completion }}</p>
         <p ng-hide="structure.completion.length">Unknown</p>
         <h5 style="margin-top: 24px;">Demolished</h5>
         <p>{{ structure.demolished && 'Yes' || 'No' }}</p>
@@ -108,12 +108,11 @@
           </div>
           <div class="form-group">
             <label>Completion Date</label>
-            <div class="well well-sm">
-              <div uib-datepicker ng-model="structure.completion" show-weeks="false"></div>
-              <div style="margin-top: 10px;" ng-show="structure.completion">
-                <button type="button" class="btn btn-sm btn-primary" ng-click="clearCompletionDate()">Clear</button>
-              </div>
+            <div>
+              <small>Optionally enter completion date as full date (DD-MM-YYYY), year-month (MM-YYYY), or year only (YYYY).</small>
             </div>
+            <input name="completion" type="text" class="form-control" placeholder="DD-MM-YYYY" ng-model="_completion" validdate="true">
+            <p ng-show="form.completion.$error.validdate" class="text-danger">Invalid date format. Please enter valid date formatted either as DD-MM-YYYY, MM-YYYY, or YYYY. </p>
           </div>
           <div class="checkbox">
             <label> <input type="checkbox" ng-model="structure.australian">Australian Project
