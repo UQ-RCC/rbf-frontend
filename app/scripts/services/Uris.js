@@ -7,5 +7,6 @@ angular.module('qldarchApp').service('Uris', function() {
   this.WS_ROOT = '/ws/';
   this.WS_MEDIA = '/ws/media/';
   this.WS_DOWNLOAD = '/ws/media/download/';
-  this.reCAPTCHASiteKey = '6Lf2kDYUAAAAANnv8xSvpjyVxoNvf5pCA7JxkwIY';
+  //this.reCAPTCHASiteKey = '6Lf2kDYUAAAAANnv8xSvpjyVxoNvf5pCA7JxkwIY';
+  this.reCAPTCHASiteKey = '6Lfcrs4ZAAAAAHj52atuQq5lBuwxizhdJ2JrYSu0';
 });

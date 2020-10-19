@@ -2,7 +2,7 @@
 
 angular.module('qldarchApp').controller(
     'StructureCtrl',
-    function($scope, structure, designers, ArchObj, firms, architects, $filter, buildingTypologies, $state, $q, $stateParams) {
+    function($scope, structure, designers, ArchObj, firms, architects, $filter, buildingTypologies, $state, $q, $stateParams, Utils) {
       /* globals $:false */
       $scope.structure = structure;
       $scope.designers = designers;
@@ -16,23 +16,17 @@ angular.module('qldarchApp').controller(
       };
       */
       (function(){
-        var completionpd = $scope.structure.completionpd;
-        var parts = $scope.structure.completion.split('-');
-        if (completionpd >= 365) {
-          parts.splice(1);
-        } else if (completionpd >= 28) {
-          parts.splice(2);
+        if ($scope.structure && $scope.structure.completion) {
+          var completionpd = $scope.structure.completionpd;
+          var parts = $scope.structure.completion.split('-');
+          if (completionpd >= 365) {
+            parts.splice(1);
+          } else if (completionpd >= 28) {
+            parts.splice(2);
+          }
+          $scope._completion = parts.reverse().join('-');
         }
-        $scope._completion = parts.reverse().join('-');
       })();
-
-      firms = $filter('orderBy')(firms, function(firm) {
-        return firm.label;
-      });
-
-      architects = $filter('orderBy')(architects, function(architect) {
-        return architect.label;
-      });
 
       $scope.structure.type = 'structure';
 
@@ -63,23 +57,12 @@ angular.module('qldarchApp').controller(
         $scope.structure.$associatedFirm.push(firmobj);
       }
 
-      var dataFirmSelect = {
-        results : []
-      };
-
-      angular.forEach(firms, function(firm) {
-        dataFirmSelect.results.push({
-          id : firm.id,
-          text : firm.label
-        });
-      });
-
       $scope.firmSelect = {
         placeholder : 'Select a Firm',
         dropdownAutoWidth : true,
         multiple : true,
         allowClear : true,
-        data : dataFirmSelect
+        data : Utils.makeSelectOptions(firms)
       };
 
       $scope.structure.$associatedArchitects = null;
@@ -107,22 +90,11 @@ angular.module('qldarchApp').controller(
         $scope.structure.$associatedArchitects.push(architectobj);
       }
 
-      var dataArchitectSelect = {
-        results : []
-      };
-
-      angular.forEach(architects, function(architect) {
-        dataArchitectSelect.results.push({
-          id : architect.id,
-          text : architect.label
-        });
-      });
-
       $scope.architectSelect = {
         placeholder : 'Select an Architect',
         dropdownAutoWidth : true,
         multiple : true,
-        data : dataArchitectSelect
+        data : Utils.makeSelectOptions(architects)
       };
 
       $scope.structure.$typologies = null;
@@ -162,7 +134,7 @@ angular.module('qldarchApp').controller(
         if (angular.isDefined(location)) {
           clearTimeout($scope.typingTimer);
           $scope.typingTimer = setTimeout(function() {
-            $.getJSON('https://maps.googleapis.com/maps/api/geocode/json?address=' + $scope.structure.location,
+            $.getJSON('https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyByxzrKtppGuOxwzav-P52wTcfXcG1IJz0&address=' + $scope.structure.location,
                 function(data) {
                   if (data.results.length === 1) {
                     if ((structure.latitude !== data.results[0].geometry.location.lat) ||
@@ -194,7 +166,7 @@ angular.module('qldarchApp').controller(
             data.completionpd = (new Date(+parts[1], parts[0] - 1, 0)).getDate();
           } else if (parts.length === 1) {
             var y = +parts[2];
-            data.completionpd = (!(y%(y%25?4:16))) ? 366 : 365;
+            data.completionpd = !(y%(y%25?4:16)) ? 366 : 365;
           }
           data.completion = parts.reverse().join('-');
         })($scope._completion);

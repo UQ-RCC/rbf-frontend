@@ -1,0 +1,36 @@
+<div class="alert alert-warning" style="margin: 0;" ng-if="$ctrl.allowEdit()">
+  <div class="container" ng-if="$ctrl.isStateHistory()">
+    <button class="btn btn-default btn-xs" ui-sref="{{$ctrl.stateSummary}}($ctrl.stateParams)">
+      <i class="fa fa-arrow-left"></i> Back
+    </button>
+  </div>
+  <div class="container" ng-if="!$ctrl.isStateHistory()">
+    <button class="btn btn-default btn-xs" ui-sref="{{$ctrl.stateHistory}}($ctrl.stateParams)"
+      ng-if="$ctrl.allowHistory()">
+      <i class="fa fa-history"></i> History
+    </button>
+    <button class="btn btn-default btn-xs" ui-sref="{{$ctrl.stateEdit}}($ctrl.stateParams)">
+      <i class="fa fa-pencil"></i> Edit
+    </button>
+    <!-- Delete button -->
+    <button class="btn btn-default btn-xs" ng-click="$ctrl.delete()" ng-if="$ctrl.allowDelete()">
+      <i class="fa fa-trash-o"></i> Delete
+    </button>
+    <!-- /Delete button -->
+    &nbsp; | &nbsp;
+    <span ng-if="$ctrl.entity.pubts">
+      <button class="btn btn-default btn-xs" ng-click="$ctrl.unpublish()">
+        <i class="fa fa-eye-slash"></i> Unpublish
+      </button>
+      &nbsp;
+      <span class="label label-success">Published on {{$ctrl.entity.pubts}}</span>
+    </span>
+    <span ng-if="!$ctrl.entity.pubts">
+      <button class="btn btn-default btn-xs" ng-click="$ctrl.publish()">
+        <i class="fa fa-eye"></i> Publish
+      </button>
+      &nbsp;
+      <span class="label label-danger">Draft</span>
+    </span>
+  </div>
+</div>

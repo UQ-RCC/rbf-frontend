@@ -43,15 +43,7 @@ angular.module('qldarchApp').service('Auth', function Auth($http, Uris, $q) {
   };
 
   this.isEditor = function() {
-    if (angular.isDefined(this.user)) {
-      if (this.user.role === 'editor' || this.user.role === 'admin') {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
-    }
+    return angular.isDefined(this.user) && (this.user.role === 'editor' || this.user.role === 'admin');
   };
 
   this.clear = function() {

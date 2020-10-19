@@ -47,6 +47,11 @@ angular.module('qldarchApp').service('BuildingTypologyMarkers', function() {
     prefix : 'fa',
     markerColor : 'black'
   });
+  var building = L.AwesomeMarkers.icon({
+    icon : 'building',
+    prefix : 'fa',
+    markerColor : 'grey'
+  });
   return {
     'Commercial buildings' : redMoney,
     'Dwellings' : orangeHome,
@@ -56,6 +61,7 @@ angular.module('qldarchApp').service('BuildingTypologyMarkers', function() {
     'Industrial buildings' : purpleIndustry,
     'Recreation and sports facilities' : darkgreenPicture,
     'Religious buildings' : cadetblueSnowflake,
-    'Transport infrastructure' : blackRoad
+    'Transport infrastructure' : blackRoad,
+    'High-Rise' : building
   };
 });

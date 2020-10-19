@@ -1,18 +1,13 @@
 'use strict';
 
 angular.module('qldarchApp').controller('UploadInterviewsCtrl',
-    function($scope, interview, architects, personnotarchitect, $filter, $cacheFactory, File, toaster, $state, $stateParams, ArchObj) {
+    function($scope, interview, person, $filter, $cacheFactory, File, toaster, $state, $stateParams, ArchObj, Utils) {
 
       $scope.interview = interview;
 
       interview.media = $filter('orderBy')(interview.media, function(med) {
         return (med.preferred || '');
       }, true);
-
-      var person = architects.concat(personnotarchitect);
-      person = $filter('orderBy')(person, function(p) {
-        return p.label;
-      });
 
       $scope.interview.$interviewees = null;
       if (angular.isDefined(interview.interviewee)) {
@@ -36,22 +31,11 @@ angular.module('qldarchApp').controller('UploadInterviewsCtrl',
         });
       }
 
-      var dataPersonSelect = {
-        results : []
-      };
-
-      angular.forEach(person, function(p) {
-        dataPersonSelect.results.push({
-          id : p.id,
-          text : p.label
-        });
-      });
-
       $scope.personSelect = {
         placeholder : 'Select a Person',
         dropdownAutoWidth : true,
         multiple : true,
-        data : dataPersonSelect
+        data : Utils.makeSelectOptions(person)
       };
 
       $scope.interview.$youtubeUrl = null;

@@ -21,46 +21,18 @@ angular.module('qldarchApp').config(function($stateProvider) {
           });
         }
       } ],
-      architects : [ 'AggArchObjs', 'GraphHelper', '$filter', function(AggArchObjs, GraphHelper, $filter) {
-        return AggArchObjs.loadArchitects().then(function(data) {
-          var architects = GraphHelper.graphValues(data);
-          return $filter('filter')(architects, function(architect) {
-            return architect.label && !(/\s/.test(architect.label.substring(0, 1)));
-          });
-        }).catch(function() {
-          //console.log('unable to load all architects');
-          return {};
-        });
+      architects : [ 'AggArchObjs', function(AggArchObjs) {
+        return AggArchObjs.loadAllArchitects();
       } ],
-      firms : [ 'AggArchObjs', '$filter', function(AggArchObjs, $filter) {
-        return AggArchObjs.loadFirms().then(function(data) {
-          return $filter('filter')(data, function(firm) {
-            return firm.label && !(/\s/.test(firm.label.substring(0, 1)));
-          });
-        }).catch(function() {
-          //console.log('unable to load all firms');
-          return {};
-        });
+      firms : [ 'AggArchObjs', function(AggArchObjs) {
+        return AggArchObjs.loadAllFirms();
       } ],
       allstructures : [ 'AggArchObjs', function(AggArchObjs) {
-        return AggArchObjs.loadProjects().then(function(data) {
-          return data;
-        }).catch(function() {
-          //console.log('unable to load all projects');
-          return {};
-        });
+        return AggArchObjs.loadAllProjects();
       } ]
     },
     controller : [ '$scope', 'firm', 'ArchObj', '$state', function($scope, firm, ArchObj, $state) {
       $scope.firm = firm;
-      $scope.delete = function(firm) {
-        var r = window.confirm('Delete firm ' + firm.label + '?');
-        if (r === true) {
-          ArchObj.delete(firm.id).then(function() {
-            $state.go('firms.australian');
-          });
-        }
-      };
     } ]
   });
 });

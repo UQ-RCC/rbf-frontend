@@ -16,7 +16,8 @@ angular.module('qldarchApp').controller('LoginCtrl', function($scope, Uris, $htt
         Auth.clear();
         angular.extend(Auth, response.data);
         //console.log('going to main!');
-        $state.go('main');
+        //$state.go('main');
+        $state.go($state.previous, $state.previousParams);
       } else {
         toaster.pop('error', 'Error occured', 'Sorry, that email and/or password is incorrect');
       }

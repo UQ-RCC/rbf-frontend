@@ -24,37 +24,11 @@ angular.module('qldarchApp').controller('AdminMoveRelationshipsCtrl', function($
       toaster.pop('error', 'Error occured', 'Sorry, we couldn\t move relationships');
     });
   };
-
-  all = $filter('orderBy')(all, function(entity) {
-    return entity.label;
-  });
-
-  var allSelect = {
-    results : []
-  };
-
-  angular.forEach(all, function(e) {
-    if (e.label && !(/\s/.test(e.label.substring(0, 1)))) {
-      var entitytype = 'unknown';
-      if (e.hasOwnProperty('type')) {
-        entitytype = e.type.charAt(0).toUpperCase() + e.type.slice(1);
-      } else if (e.hasOwnProperty('firstname') || e.hasOwnProperty('lastname')) {
-        entitytype = 'Person';
-      } else if (e.hasOwnProperty('lat') || e.hasOwnProperty('lng')) {
-        entitytype = 'Structure';
-      }
-      allSelect.results.push({
-        id : e.id,
-        text : e.label + ' (' + entitytype + ')'
-      });
-    }
-  });
-
   $scope.entitySelect = {
     placeholder : 'Architect, Project, Firm or Other',
     dropdownAutoWidth : true,
     multiple : false,
-    data : allSelect
+    data : all
   };
 
 });

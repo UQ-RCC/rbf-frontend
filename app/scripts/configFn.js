@@ -17,7 +17,7 @@ angular.module('qldarchApp').config(function($urlRouterProvider, $httpProvider, 
       responseError : function(rejection) {
         // do something on error
         //console.log('got a Response ERROR!', rejection);
-        toaster.pop('warning', rejection.statusText, rejection.data.msg);
+        //toaster.pop('warning', rejection.statusText, rejection.data.msg);
         return $q.reject(rejection);
       }
     };

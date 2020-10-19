@@ -2,15 +2,10 @@
 
 angular.module('qldarchApp').config(
     function($stateProvider) {
-      $stateProvider.state('articlehistorylog', {
-        url : '/articlehistorylog?articleId',
+      $stateProvider.state('article.historylog', {
+        url : '/historylog',
         templateUrl : 'views/articlehistorylog.html',
         resolve : {
-          article : [ '$stateParams', 'ArchObj', function($stateParams, ArchObj) {
-            return ArchObj.load($stateParams.articleId).then(function(data) {
-              return data;
-            });
-          } ],
           users : [ 'Uris', '$http', function(Uris, $http) {
             // Gets all users in the system and their roles
             return $http.get(Uris.WS_ROOT + 'accounts/all').then(function(response) {
@@ -83,31 +78,23 @@ angular.module('qldarchApp').config(
           } ]
         },
         controller : [ '$scope', 'articlehstlog', 'ObjectDiff', 'article', 'ArchObj', '$state',
-            function($scope, articlehstlog, ObjectDiff, article, ArchObj, $state) {
-              $scope.article = article;
-              $scope.articleHistoryLog = articlehstlog;
+        function($scope, articlehstlog, ObjectDiff, article) {
+          $scope.article = article;
+          $scope.articleHistoryLog = articlehstlog;
 
-              for (var i = 0; i < $scope.articleHistoryLog.length; i++) {
-                var prev = i;
-                var curr = i;
-                if (i > 0) {
-                  prev = i - 1;
-                }
-                ObjectDiff.setOpenChar('');
-                ObjectDiff.setCloseChar('');
-                var diff = ObjectDiff.diffOwnProperties($scope.articleHistoryLog[prev].document, $scope.articleHistoryLog[curr].document);
-                $scope.articleHistoryLog[i].diffValue = ObjectDiff.toJsonView(diff);
-                $scope.articleHistoryLog[i].diffValueChanges = ObjectDiff.toJsonDiffView(diff);
-              }
+          for (var i = 0; i < $scope.articleHistoryLog.length; i++) {
+            var prev = i;
+            var curr = i;
+            if (i > 0) {
+              prev = i - 1;
+            }
+            ObjectDiff.setOpenChar('');
+            ObjectDiff.setCloseChar('');
+            var diff = ObjectDiff.diffOwnProperties($scope.articleHistoryLog[prev].document, $scope.articleHistoryLog[curr].document);
+            $scope.articleHistoryLog[i].diffValue = ObjectDiff.toJsonView(diff);
+            $scope.articleHistoryLog[i].diffValueChanges = ObjectDiff.toJsonDiffView(diff);
+          }
+        } ]
 
-              $scope.delete = function(article) {
-                var r = window.confirm('Delete article ' + article.label + '?');
-                if (r === true) {
-                  ArchObj.delete(article.id).then(function() {
-                    $state.go('articles');
-                  });
-                }
-              };
-            } ]
       });
     });

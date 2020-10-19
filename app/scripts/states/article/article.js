@@ -9,6 +9,9 @@ angular.module('qldarchApp').config(function($stateProvider) {
         return ArchObj.load($stateParams.articleId).then(function(data) {
           return data;
         });
+      } ],
+      relationshipOptions : [ 'RelationshipOptions', function(RelationshipOptions) {
+        return RelationshipOptions.all();
       } ]
     },
     controller : 'ArticleCtrl'

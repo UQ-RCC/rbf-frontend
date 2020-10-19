@@ -17,3 +17,6 @@ Running the Front End locally (pointing at qldarch server)
 ## 3. Running it Locally 
 * Run `grunt server`
 
+## 4. Build
+* Run `grunt build --force`
+

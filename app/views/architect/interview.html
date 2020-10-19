@@ -1,17 +1,9 @@
 <div class="interview">
-  <div class="alert alert-warning" style="margin: 0;" ng-if="Auth.user.role === 'editor' || Auth.user.role === 'admin'">
-    <div class="container">
-      <button class="btn btn-default btn-xs" ui-sref="interviewhistorylog({ interviewId: interview.id })" ng-if="Auth.user.role === 'admin'">
-        <i class="fa fa-calendar"></i> History
-      </button>
-      <button class="btn btn-default btn-xs" ui-sref="upload.interviews({ id: interview.id })">
-        <i class="fa fa-pencil"></i> Edit
-      </button>
-      <button class="btn btn-default btn-xs" ng-click="delete(interview)" ng-if="Auth.canDelete()">
-        <i class="fa fa-trash-o"></i> Delete
-      </button>
-    </div>
-  </div>
+  <editor-tools entity="interview" state="interview" 
+    state-summary="interview" 
+    state-edit="upload.interviews" 
+    state-history="interviewhistorylog">
+  </editor-tools>
   <div class="interview-player">
     <!-- player -->
     <div class="player">
@@ -163,143 +155,19 @@
             <!-- end of transcript -->
             <!-- relationships -->
             <div class="col-sm-6">
-              <div class="panel panel-default"
-                ng-if="((!isSearching || Auth.success ) && exchange.relationships.length) || (Auth.user.role === 'editor' || Auth.user.role === 'admin')">
-                <div class="panel-heading" ng-if="(Auth.user.role === 'editor' || Auth.user.role === 'admin') && Auth.success && !isSearching">
-                  <!-- Control buttons -->
-                  <span ng-if="!exchange.isAddingRelationship || !exchange.isEditingRelationships">
-                    <button type="button" class="btn btn-default btn-xs" ng-click="showAddRelationship(exchange)">
-                      <i class="fa fa-plus fa-fw"></i>
-                    </button>
-                    <button type="button" class="btn btn-default btn-xs" ng-click="showEditRelationships(exchange)"
-                      ng-if="exchange.relationships.length">
-                      <i class="fa fa-pencil fa-fw"></i>
-                    </button>
-                  </span>
-                  <button type="button" class="btn btn-primary btn-xs" ng-click="hideEditRelationships(exchange)"
-                    ng-if="exchange.isEditingRelationships">
-                    <i class="fa fa-check fa-fw"></i>
-                  </button>
-                  <!-- New relationship -->
-                  <form name="form" ng-submit="addRelationshipToExchange(relationship, exchange, interview.id)" ng-if="exchange.isAddingRelationship">
-                    <div class="form-group">
-                      <label>Subject <i class="fa fa-asterisk fa-asterisk-required"></i></label>
-                      <div class="row">
-                        <div class="col-sm-9">
-                          <div ui-select2="subjObjSelect" ng-model="relationship.subject" class="form-control" required></div>
-                        </div>
-                        <div class="col-sm-3" style="border-left: 1px solid #ccc; padding-left: 16px;">
-                          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
-                            style="width: 109px; padding-top: 4px; padding-bottom: 4px;">
-                            Add New&nbsp;&nbsp;&nbsp;<span class="caret"></span>
-                          </button>
-                          <ul class="dropdown-menu" role="addNew">
-                            <li><a ui-sref="architect.summary.edit({})" ui-sref-opts="{inherit:false}">Architect</a></li>
-                            <li><a ui-sref="firm.summary.edit({})">Firm</a></li>
-                            <li><a ui-sref="structure.summary.edit({})">Project</a></li>
-                            <li><a ui-sref="other.summary.edit({})">Other</a></li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <label>Relationship <i class="fa fa-asterisk fa-asterisk-required"></i></label>
-                      <div ui-select2="relationshiptypeSelect" ng-model="relationship.type" class="form-control" required></div>
-                    </div>
-                    <div class="form-group">
-                      <label>Object <i class="fa fa-asterisk fa-asterisk-required"></i></label>
-                      <div class="row">
-                        <div class="col-sm-9">
-                          <div ui-select2="subjObjSelect" ng-model="relationship.object" class="form-control" required></div>
-                        </div>
-                        <div class="col-sm-3" style="border-left: 1px solid #ccc; padding-left: 16px;">
-                          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
-                            style="width: 109px; padding-top: 4px; padding-bottom: 4px;">
-                            Add New&nbsp;&nbsp;&nbsp;<span class="caret"></span>
-                          </button>
-                          <ul class="dropdown-menu" role="addNew">
-                            <li><a ui-sref="architect.summary.edit({})" ui-sref-opts="{inherit:false}">Architect</a></li>
-                            <li><a ui-sref="firm.summary.edit({})">Firm</a></li>
-                            <li><a ui-sref="structure.summary.edit({})">Project</a></li>
-                            <li><a ui-sref="other.summary.edit({})">Other</a></li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <label>From</label>
-                      <div class="well well-sm">
-                        <div uib-datepicker ng-model="relationship.from" min-mode="year" year-range="5"></div>
-                        <div style="margin-top: 10px;" ng-if="relationship.from">
-                          <button type="button" class="btn btn-sm btn-primary" ng-click="relationship.from = ''">Clear</button>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <label>Until</label>
-                      <div class="well well-sm">
-                        <div uib-datepicker ng-model="relationship.until" min-mode="year" year-range="5"></div>
-                        <div style="margin-top: 10px;" ng-if="relationship.until">
-                          <button type="button" class="btn btn-sm btn-primary" ng-click="relationship.until = ''">Clear</button>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <label>Note</label>
-                      <textarea rows="1" id="biography" class="form-control" placeholder="Relationship Note" ng-model="relationship.note"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-sm btn-primary" ng-disabled="form.$invalid">Add</button>
-                    <button type="button" class="btn btn-sm btn-default" ng-click="hideAddRelationship(exchange)">Cancel</button>
-                  </form>
-                </div>
-                <!-- Relationship List -->
-                <ul class="list-group" ng-if="exchange.relationships.length">
-                  <li class="list-group-item" ng-repeat="relationship in exchange.relationships">
-                    <button class="btn btn-xs btn-danger" ng-if="exchange.isEditingRelationships" style="margin-right: 5px;"
-                      ng-click="deleteRelationship(relationship, exchange)">
-                      <i class="fa fa-trash-o fa-fw"></i>
-                    </button> <a ng-if="relationship.subjecttype=='person'&&relationship.subjectarchitect==true"
-                    ui-sref="architect.summary({ architectId: relationship.subject })"
-                    ng-bind-html="relationship.subjectlabel || '' | highlight:transcriptSearchInput"></a> <a
-                    ng-if="relationship.subjecttype=='person'&&relationship.subjectarchitect==false"
-                    ui-sref="other.summary({ otherId: relationship.subject })"
-                    ng-bind-html="relationship.subjectlabel || '' | highlight:transcriptSearchInput"></a> <span
-                    ng-if="relationship.subjecttype=='person'&&relationship.subjectarchitect==undefined"
-                    ng-bind-html="relationship.subjectlabel || '' | highlight:transcriptSearchInput"></span> <a
-                    ng-if="relationship.subjecttype=='firm'" ui-sref="firm.summary({ firmId: relationship.subject })"
-                    ng-bind-html="relationship.subjectlabel || '' | highlight:transcriptSearchInput"></a> <a
-                    ng-if="relationship.subjecttype=='structure'" ui-sref="structure.summary({ structureId: relationship.subject })"
-                    ng-bind-html="relationship.subjectlabel || '' | highlight:transcriptSearchInput"></a> <a
-                    ng-if="relationship.subjecttype!= 'person'&&relationship.subjecttype!='firm'&&relationship.subjecttype!='structure'&&relationship.subjecttype!=undefined"
-                    ui-sref="other.summary({ otherId: relationship.subject })"
-                    ng-bind-html="relationship.subjectlabel || '' | highlight:transcriptSearchInput"></a> <span
-                    ng-if="relationship.subjecttype!= 'person'&&relationship.subjecttype!='firm'&&relationship.subjecttype!='structure'&&relationship.subjecttype==undefined"
-                    ng-bind-html="relationship.subjectlabel || '' | highlight:transcriptSearchInput"></span> <span
-                    ng-bind-html="relationship.relationship || '' | highlight:transcriptSearchInput"> </span> <a
-                    ng-if="relationship.objecttype=='person'&&relationship.objectarchitect==true"
-                    ui-sref="architect.summary({ architectId: relationship.object })"
-                    ng-bind-html="relationship.objectlabel || '' | highlight:transcriptSearchInput"></a> <a
-                    ng-if="relationship.objecttype=='person'&&relationship.objectarchitect==false"
-                    ui-sref="other.summary({ otherId: relationship.object })"
-                    ng-bind-html="relationship.objectlabel || '' | highlight:transcriptSearchInput"></a> <span
-                    ng-if="relationship.objecttype=='person'&&relationship.objectarchitect==undefined"
-                    ng-bind-html="relationship.objectlabel || '' | highlight:transcriptSearchInput"></span> <a ng-if="relationship.objecttype=='firm'"
-                    ui-sref="firm.summary({ firmId: relationship.object })"
-                    ng-bind-html="relationship.objectlabel || '' | highlight:transcriptSearchInput"></a> <a
-                    ng-if="relationship.objecttype=='structure'" ui-sref="structure.summary({ structureId: relationship.object })"
-                    ng-bind-html="relationship.objectlabel || '' | highlight:transcriptSearchInput"></a> <a
-                    ng-if="relationship.objecttype!= 'person'&&relationship.objecttype!='firm'&&relationship.objecttype!='structure'&&relationship.objecttype!=undefined"
-                    ui-sref="other.summary({ otherId: relationship.object })"
-                    ng-bind-html="relationship.objectlabel || '' | highlight:transcriptSearchInput"></a> <span
-                    ng-if="relationship.objecttype!= 'person'&&relationship.objecttype!='firm'&&relationship.objecttype!='structure'&&relationship.objecttype==undefined"
-                    ng-bind-html="relationship.objectlabel || '' | highlight:transcriptSearchInput"></span> <!-- Date --> <span
-                    ng-if="relationship.from">(</span>{{ relationship.from }}<span ng-if="relationship.from && !relationship.until">)</span><span
-                    ng-if="relationship.from && relationship.until"> - </span><span ng-if="!relationship.from && relationship.until">(</span>{{
-                    relationship.until }}<span ng-if="relationship.until">)</span>
-                  </li>
-                </ul>
-                <!-- /Relationship List -->
-              </div>
+              <relationship-list 
+                relationships="exchange.relationships"
+                entities="relationshipOptions.entities"
+                types="relationshipOptions.types"
+                default-subject-id="interview.interviewee[0].id"
+                ng-attr-allow-edit="{{ Auth.isEditor() && Auth.success && !isSearching ? '' : undefined}}"
+                ng-if="((!isSearching || Auth.success ) && exchange.relationships.length) || Auth.isEditor()"
+                on-create="createRelationship(data, payload, exchange, interview.id)"
+                on-delete="deleteRelationship(data)"
+                on-adding="player.pause()"
+                on-editing="player.pause()"
+                on-created="relationships.push(data)">
+              </relationship-list>
             </div>
             <!-- end of relationships -->
           </div>

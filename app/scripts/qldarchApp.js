@@ -5,5 +5,6 @@ angular.module('config', []).constant('ENV', {
   'apiEndpoint' : 'https://your-development.api.endpoint:3000'
 });
 
-angular.module('qldarchApp', [ 'config', 'ngCookies', 'ngResource', 'ngSanitize', 'ngAnimate', 'ngRoute', 'ngProgress', 'ui.bootstrap', 'ui.select2',
-    'mediaPlayer', 'ui.utils', 'infinite-scroll', 'ui.router', 'angularFileUpload', 'toaster', 'vcRecaptcha', 'ui.tinymce', 'ui-leaflet' ]);
+angular.module('qldarchApp', [ 'config', 'ngCookies', 'ngResource', 'ngSanitize', 'ngAnimate', 'ngRoute', 
+    'ngProgress', 'ui.bootstrap', 'ui.select2', 'mediaPlayer', 'ui.utils', 'infinite-scroll', 'ui.router',
+    'angularFileUpload', 'toaster', 'vcRecaptcha', 'ui.tinymce', 'ui-leaflet' ]);

@@ -45,25 +45,11 @@ angular.module('qldarchApp').config(function($stateProvider) {
         designers.firms = _.uniqBy(firm, 'subjectlabel');
         return designers;
       } ],
-      firms : [ 'AggArchObjs', '$filter', function(AggArchObjs, $filter) {
-        return AggArchObjs.loadFirms().then(function(data) {
-          return $filter('filter')(data, function(firm) {
-            return firm.label && !(/\s/.test(firm.label.substring(0, 1)));
-          });
-        }).catch(function() {
-          //console.log('unable to load firms');
-          return {};
-        });
+      architects : [ 'AggArchObjs', function(AggArchObjs) {
+        return AggArchObjs.loadAllArchitects();
       } ],
-      architects : [ 'AggArchObjs', 'GraphHelper', '$filter', function(AggArchObjs, GraphHelper, $filter) {
-        return AggArchObjs.loadArchitects().then(function(data) {
-          return $filter('filter')(data, function(architect) {
-            return architect.label && !(/\s/.test(architect.label.substring(0, 1)));
-          });
-        }).catch(function() {
-          //console.log('unable to load architects');
-          return {};
-        });
+      firms : [ 'AggArchObjs', function(AggArchObjs) {
+        return AggArchObjs.loadAllFirms();
       } ],
       buildingTypologies : [ 'BuildingTypologies', function(BuildingTypologies) {
         return BuildingTypologies.load().then(function(response) {

@@ -765,6 +765,29 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
       });
     },
 
+    update : function(id, data) {
+      return $http({
+        method : 'POST',
+        url : path + id,
+        headers : {
+          'Content-Type' : 'application/x-www-form-urlencoded'
+        },
+        withCredentials : true,
+        transformRequest : function(obj) {
+          return $.param(obj, true);
+        },
+        data : data
+      }).then(function(response) {
+        angular.extend(data, response.data);
+        toaster.pop('success', data.label + ' updated');
+        //console.log('updated other id: ' + data.id);
+        return data;
+      }, function(response) {
+        toaster.pop('error', 'Error occured', response.data.msg);
+        //console.log('error message: ' + response.data.msg);
+      });
+    },
+
     delete : function(id) {
       return $http.delete(path + id, {
         withCredentials : true
@@ -785,6 +808,12 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
       }, function(response) {
         toaster.pop('error', 'Error occured', response.data.msg);
         //console.log('error message: ' + response.data.msg);
+      });
+    },
+
+    loadPlain : function(id) {
+      return $http.get(path + id).then(function(result) {
+        return result.data;
       });
     },
 
@@ -818,6 +847,8 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
                   relationship.relationship = response[relationship.relationship];
                 }
               });
+            } else {
+              exchange.relationships = [];
             }
           });
           return result.data;

@@ -22,7 +22,7 @@ angular.module('qldarchApp').config(function($stateProvider) {
         if (other.interviews) {
           var interviews = [];
           angular.forEach(other.interviews, function(interview) {
-            ArchObj.load(interview).then(function(data) {
+            ArchObj.loadPlain(interview).then(function(data) {
               interviews.push(data);
             }).catch(function() {
               //console.log('unable to load interview ArchObj');
@@ -36,15 +36,6 @@ angular.module('qldarchApp').config(function($stateProvider) {
     controller : [ '$scope', 'other', 'interviews', 'ArchObj', '$state', function($scope, other, interviews, ArchObj, $state) {
       $scope.other = other;
       $scope.interviews = interviews;
-
-      $scope.delete = function(other) {
-        var r = window.confirm('Delete other ' + other.label + '?');
-        if (r === true) {
-          ArchObj.delete(other.id).then(function() {
-            $state.go('others');
-          });
-        }
-      };
     } ]
   });
 });

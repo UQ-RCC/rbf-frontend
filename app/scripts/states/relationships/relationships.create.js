@@ -10,42 +10,14 @@ angular.module('qldarchApp').config(function($stateProvider) {
           return response;
         });
       } ],
-      architects : [ 'AggArchObjs', '$filter', function(AggArchObjs, $filter) {
-        return AggArchObjs.loadArchitects().then(function(data) {
-          angular.forEach(data, function(d) {
-            d.type = 'architect';
-          });
-          return $filter('filter')(data, function(architect) {
-            return architect.label && !(/\s/.test(architect.label.substring(0, 1)));
-          });
-        }).catch(function() {
-          //console.log('unable to load architects');
-          return {};
-        });
+      architects : [ 'AggArchObjs', function(AggArchObjs) {
+        return AggArchObjs.loadAllArchitects();
       } ],
-      firms : [ 'AggArchObjs', '$filter', function(AggArchObjs, $filter) {
-        return AggArchObjs.loadFirms().then(function(data) {
-          angular.forEach(data, function(d) {
-            d.type = 'firm';
-          });
-          return $filter('filter')(data, function(firm) {
-            return firm.label && !(/\s/.test(firm.label.substring(0, 1)));
-          });
-        }).catch(function() {
-          //console.log('unable to load firms');
-          return {};
-        });
+      firms : [ 'AggArchObjs', function(AggArchObjs) {
+        return AggArchObjs.loadAllFirms();
       } ],
       structures : [ 'AggArchObjs', function(AggArchObjs) {
-        return AggArchObjs.loadProjects().then(function(data) {
-          angular.forEach(data, function(d) {
-            d.type = 'project';
-          });
-          return data;
-        }).catch(function() {
-          //console.log('unable to load projects');
-          return {};
-        });
+        return AggArchObjs.loadAllProjects();
       } ],
       architectsFirms : [ 'architects', 'firms', function(architects, firms) {
         var entities = [];

@@ -12,18 +12,11 @@
       <h1>{{ interview.label }}</h1>
     </div>
   </div>
-  <div class="alert alert-warning" ng-show="(Auth.user.role === 'editor' || Auth.user.role === 'admin')&&interview.id" style="margin: 0;">
-    <div class="container">
-      <div>
-        <button class="btn btn-default btn-xs" ui-sref="upload.interviews({ id: interview.id })">
-          <i class="fa fa-pencil"></i> Edit
-        </button>
-        <button class="btn btn-default btn-xs" ng-click="delete(interview)" ng-show="Auth.user.role === 'admin'">
-          <i class="fa fa-trash-o"></i> Delete
-        </button>
-      </div>
-    </div>
-  </div>
+  <editor-tools entity="interview" state="interview" 
+    state-summary="interview" 
+    state-edit="upload.interviews" 
+    state-history="interviewhistorylog">
+  </editor-tools>
   <div class="alert alert-info" style="margin-bottom: 0;">
     <div class="container">
       <i class="fa fa-info-circle"></i> Interview history log.

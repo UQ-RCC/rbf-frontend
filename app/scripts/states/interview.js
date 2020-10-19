@@ -10,8 +10,9 @@ angular.module('qldarchApp').config(function($stateProvider) {
       interview : [ '$state', '$stateParams', 'ngProgress', 'interviews', 'ArchObj', function($state, $stateParams, ngProgress, interviews, ArchObj) {
         ngProgress.reset();
         return ArchObj.load($stateParams.interviewId).then(function(data) {
-          var isArchitect;
-          var intervieweeId;
+          var isArchitect = data.interviewee[0].architect;
+          var intervieweeId = data.interviewee[0].id;
+          /*
           var archobjinterviewee = angular.copy(data.interviewee);
           for (var h = 0; h < archobjinterviewee.length; h++) {
             for (var i = 0; i < interviews.length; i++) {
@@ -20,7 +21,10 @@ angular.module('qldarchApp').config(function($stateProvider) {
                 intervieweeId = interviews[i].interviewee;
               }
             }
-          }
+          } console.log(isArchitect);
+          console.log(interviews);
+          console.log(data);
+          */
           if (isArchitect) {
             $state.go('architect.interview', {
               architectId : intervieweeId,

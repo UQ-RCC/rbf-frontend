@@ -79,13 +79,14 @@ angular.module('qldarchApp').controller(
         leafletData.getMap().then(function(map) {
           var markers = L.markerClusterGroup();
           var latlon = [];
-          angular.forEach($scope.structures, function(structure) {
+          var structure, i, mkrIcon, icon;
+          for (i=0; i<$scope.structures.length; ++i) {
+            structure = $scope.structures[i];
             if (angular.isDefined(structure.lat) && angular.isDefined(structure.lng)) {
-              var mkrIcon = {};
-              if (angular.isDefined(structure.typology)) {
-                mkrIcon = {
-                  icon : BuildingTypologyMarkers[structure.typology]
-                };
+              mkrIcon = {};
+              icon = BuildingTypologyMarkers[structure.typology];
+              if (icon) {
+                mkrIcon = { icon : icon };
               }
               var mkr = [ structure.lat, structure.lng ];
               var mkrPopup = '<a href="/project/summary?structureId=' + structure.id + '">' + structure.label + '</a>';
@@ -93,7 +94,7 @@ angular.module('qldarchApp').controller(
               markers.addLayer(marker);
               latlon.push(mkr);
             }
-          });
+          }
           map.addLayer(markers);
           map.fitBounds(new L.LatLngBounds(latlon));
         });

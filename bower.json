@@ -14,6 +14,7 @@
     "bootstrap": "~3.3.7",
     "font-awesome": "~4.7.0",
     "angular-ui-select2": "~0.0.5",
+    "angular-ui-select": "~0.19.8",
     "d3": "~3.4.13",
     "typeahead.js": "~0.9.3",
     "select2-bootstrap-css": "https://github.com/fk/select2-bootstrap-css.git#f263e899fc0fcf7cf96df9f218488e67a349204b",

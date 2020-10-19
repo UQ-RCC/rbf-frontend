@@ -1,3 +1,5 @@
+<div ui-view autoscroll="false"></div>
+<div ng-if="!$state.includes('article.historylog')">
 <div class="page-header has-subnav">
   <div class="container">
     <div class="row" ng-show="$state.includes('article.edit')">
@@ -12,39 +14,19 @@
     <h1>{{ article.label }}</h1>
   </div>
 </div>
-<div class="alert alert-warning" style="margin: 0;"
-  ng-hide="($state.includes('article.edit')&&Auth.user.role === 'editor')||(!(article.media|filter:{type:'Article'}).length&&!(Auth.user.role === 'editor'||Auth.user.role === 'admin'))">
-  <div class="container">
-    <!-- Download dropdown -->
-    <div class="btn-group" ng-hide="!(article.media|filter:{type:'Article'}).length||$state.includes('article.edit')">
-      <div class="dropdown">
-        <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-          Download <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu" role="menu">
-          <li ng-repeat="file in (article.media|filter:{type:'Article'})"><a ng-href="{{Uris.WS_DOWNLOAD+file.id}}" alt="" target="_blank">{{
-              file.filename }}</a></li>
-        </ul>
-      </div>
-    </div>
-    <button class="btn btn-default btn-xs" ui-sref="articlehistorylog({ articleId: article.id })" ng-show="Auth.user.role === 'admin'">
-      <i class="fa fa-calendar"></i> History
-    </button>
-    <button class="btn btn-default btn-xs" ui-sref="article.edit({ articleId: article.id })"
-      ng-show="Auth.isEditor()&&!$state.includes('article.edit')">
-      <i class="fa fa-pencil"></i> Edit
-    </button>
-    <!-- Delete button -->
-    <button class="btn btn-default btn-xs" ng-click="delete(article)" ng-show="Auth.canDelete()&&!$state.includes('article.edit')">
-      <i class="fa fa-trash-o"></i> Delete
-    </button>
-    <!-- /Delete button -->
-  </div>
-</div>
+<editor-tools entity="article" state="article" state-summary="article"></editor-tools>
 <div class="l-frame">
   <div class="container">
     <div class="row" ng-hide="$state.includes('article.edit')">
       <div class="col-md-6">
+        <div class="panel panel-default" ng-if="(article.media|filter:{type:'Article'}).length">
+          <div class="panel-heading"><strong>Files</strong></div>
+          <ul class="list-group">
+            <li class="list-group-item" ng-repeat="file in (article.media|filter:{type:'Article'})">
+              <a ng-href="{{Uris.WS_DOWNLOAD+file.id}}" alt="" target="_blank">{{file.filename }}</a>
+            </li>
+          </ul>
+        </div>
         <h5>Author(s)</h5>
         <p>{{ article.authors }}</p>
         <h5>Periodical Title</h5>
@@ -61,7 +43,18 @@
         <h5>Summary</h5>
         <p style="white-space: pre-wrap;" ng-bind-html="article.summary"></p>
         <p class="text-muted" data-ng-hide="article.summary.length">No summary</p>
-      </div>
+        <h5 ng-if="(Auth.success && article.annotations.length) || Auth.isEditor()">Annotation(s)</h5>
+        <relationship-list 
+          relationships="article.annotations"
+          entities="relationshipOptions.entities"
+          types="relationshipOptions.types"
+          ng-attr-allow-edit="{{ Auth.isEditor() && Auth.success ? '' : undefined }}"
+          field-page="true"
+          ng-if="(Auth.success && article.annotations.length) || Auth.isEditor()"
+          on-create="createRelationship(data, payload, article.id)"
+          on-delete="deleteRelationship(data)">
+        </relationship-list>
+  </div>
     </div>
     <div class="row" ng-show="$state.includes('article.edit')">
       <div class="col-md-6">
@@ -103,4 +96,5 @@
       </div>
     </div>
   </div>
+</div>
 </div>

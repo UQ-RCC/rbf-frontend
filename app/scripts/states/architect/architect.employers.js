@@ -19,12 +19,12 @@ angular.module('qldarchApp').config(function($stateProvider) {
           }
         });
         angular.forEach(employedby, function(employer) {
+          if (employer.subjecttype === 'firm') {
+            employer.firmId = employer.subject;
+          } else {
+            employer.firmId = employer.object;
+          }
           angular.forEach(firms, function(firm) {
-            if (employer.subjecttype === 'firm') {
-              employer.firmId = employer.subject;
-            } else {
-              employer.firmId = employer.object;
-            }
             if (employer.firmId === firm.id) {
               if (angular.isDefined(firm.media)) {
                 employer.media = firm.media;

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('qldarchApp').controller('RelationshipsCreateCtrl',
-    function($scope, $http, Uris, toaster, types, $filter, architects, firms, structures, architectsFirms, $state, $stateParams, CreateRelationship) {
+    function($scope, $http, Uris, toaster, types, $filter, architects, firms, structures, architectsFirms, $state, $stateParams, CreateRelationship, Utils) {
 
       $scope.relationship = {};
 
@@ -44,41 +44,9 @@ angular.module('qldarchApp').controller('RelationshipsCreateCtrl',
         };
       }
 
-      architects = $filter('orderBy')(architects, function(architect) {
-        return architect.label;
-      });
-      var architectsSelect = {
-        results : []
-      };
-      angular.forEach(architects, function(architect) {
-        architectsSelect.results.push({
-          id : architect.id,
-          text : architect.label + ' (Architect)'
-        });
-      });
+      var architectsSelect = Utils.makeSelectOptions(architects);
 
-      architectsFirms = $filter('orderBy')(architectsFirms, function(entity) {
-        return entity.label;
-      });
-      var architectsFirmsSelect = {
-        results : []
-      };
-      angular.forEach(architectsFirms, function(e) {
-        if (e.label && !(/\s/.test(e.label.substring(0, 1)))) {
-          var entitytype = 'unknown';
-          if (e.hasOwnProperty('type')) {
-            entitytype = e.type.charAt(0).toUpperCase() + e.type.slice(1);
-          } else if (e.hasOwnProperty('firstname') || e.hasOwnProperty('lastname')) {
-            entitytype = 'Architect';
-          } else if (e.hasOwnProperty('lat') || e.hasOwnProperty('lng')) {
-            entitytype = 'Project';
-          }
-          architectsFirmsSelect.results.push({
-            id : e.id,
-            text : e.label + ' (' + entitytype + ')'
-          });
-        }
-      });
+      var architectsFirmsSelect = Utils.makeSelectOptions(architectsFirms, true);
 
       var subjplaceholder;
       var subjdataselect;
@@ -97,41 +65,8 @@ angular.module('qldarchApp').controller('RelationshipsCreateCtrl',
         data : subjdataselect
       };
 
-      firms = $filter('orderBy')(firms, function(firm) {
-        return firm.label;
-      });
-      var firmsSelect = {
-        results : []
-      };
-      angular.forEach(firms, function(firm) {
-        firmsSelect.results.push({
-          id : firm.id,
-          text : firm.label + ' (Firm)'
-        });
-      });
-
-      structures = $filter('orderBy')(structures, function(entity) {
-        return entity.label;
-      });
-      var structuresSelect = {
-        results : []
-      };
-      angular.forEach(structures, function(e) {
-        if (e.label && !(/\s/.test(e.label.substring(0, 1)))) {
-          var entitytype = 'unknown';
-          if (e.hasOwnProperty('type')) {
-            entitytype = e.type.charAt(0).toUpperCase() + e.type.slice(1);
-          } else if (e.hasOwnProperty('firstname') || e.hasOwnProperty('lastname')) {
-            entitytype = 'Architect';
-          } else if (e.hasOwnProperty('lat') || e.hasOwnProperty('lng')) {
-            entitytype = 'Project';
-          }
-          structuresSelect.results.push({
-            id : e.id,
-            text : e.label + ' (' + entitytype + ')'
-          });
-        }
-      });
+      var firmsSelect = Utils.makeSelectOptions(firms);
+      var structuresSelect = Utils.makeSelectOptions(structures);
 
       var objplaceholder;
       var objdataselect;

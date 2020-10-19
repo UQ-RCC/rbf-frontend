@@ -22,7 +22,9 @@ angular.module('qldarchApp').run(function($rootScope, $route, $location, ngProgr
     paste_as_text : true,
     menubar : false,
     toolbar : 'bold | italic',
-    statusbar : false
+    statusbar : true,
+    resize: true,
+    elementpath: false
   };
 
   $http.get(Uris.WS_ROOT + 'user').then(function(status) {
@@ -37,11 +39,13 @@ angular.module('qldarchApp').run(function($rootScope, $route, $location, ngProgr
   $rootScope.globalSearch.query = '';
 
   // Adds the slim progress bar
-  $rootScope.$on('$stateChangeStart', function(/*event, toState, toParams, fromState, fromParams*/) {
+  $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
     //console.log('changing', event, toState, toParams, fromState, fromParams);
     ngProgress.reset();
     ngProgress.color('#ea1d5d');
     ngProgress.start();
+    $state.previous = fromState.name;
+    $state.previousParams = fromParams;
   });
   $rootScope.$on('$stateChangeSuccess', function() {
     ngProgress.complete();
@@ -128,4 +132,5 @@ angular.module('qldarchApp').run(function($rootScope, $route, $location, ngProgr
       }
     }
   };
+
 });

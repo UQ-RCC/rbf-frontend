@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('qldarchApp').controller('FileVideoCtrl',
-    function($scope, $filter, $upload, File, $state, $stateParams, firms, architects, structures, toaster) {
+    function($scope, $filter, $upload, File, $state, $stateParams, archobjs, Utils, toaster) {
 
       function goToVideos() {
         var params = {};
@@ -21,31 +21,17 @@ angular.module('qldarchApp').controller('FileVideoCtrl',
 
       $scope.expressions = [];
 
-      var archobjs = [];
-
-      angular.forEach(architects, function(architect) {
-        architect.detailtype = '(Person)';
-      });
-
-      angular.forEach(firms, function(firm) {
-        firm.detailtype = '(Firm)';
-      });
-
-      angular.forEach(structures, function(structure) {
-        structure.detailtype = '(Project)';
-      });
-
-      archobjs = architects.concat(firms).concat(structures);
-
-      archobjs = $filter('orderBy')(archobjs, function(archobj) {
-        return archobj.label;
-      });
+      // Setup the entity select boxes
+      $scope.archObjSelect = {
+        placeholder : 'Select a Person or Firm or Project',
+        dropdownAutoWidth : true,
+        multiple : false,
+        // minimumInputLength: 2,
+        data : Utils.makeSelectOptions(archobjs, true)
+      };
 
       if ($stateParams.id && $stateParams.name) {
-        $scope.selectedObj = {
-          id : $stateParams.id,
-          text : $stateParams.name + ' (' + $stateParams.type.charAt(0).toUpperCase() + $stateParams.type.slice(1) + ')',
-        };
+        $scope.selectedObj = Utils.findEntity($scope.archObjSelect.data, $stateParams.id);
         $scope.selectedTitle = $stateParams.name;
       }
 
@@ -99,25 +85,6 @@ angular.module('qldarchApp').controller('FileVideoCtrl',
 
       $scope.cancelUpload = function() {
         goToVideos();
-      };
-
-      var archObjData = {
-        results : []
-      };
-      angular.forEach(archobjs, function(archobj) {
-        archObjData.results.push({
-          id : archobj.id,
-          text : archobj.label + ' ' + archobj.detailtype
-        });
-      });
-
-      // Setup the entity select boxes
-      $scope.archObjSelect = {
-        placeholder : 'Select an Architect or Firm or Project',
-        dropdownAutoWidth : true,
-        multiple : false,
-        // minimumInputLength: 2,
-        data : archObjData
       };
 
     });

@@ -76,14 +76,6 @@ angular.module('qldarchApp').config(
                 $scope.interviewHistoryLog[i].diffValueChanges = ObjectDiff.toJsonDiffView(diff);
               }
 
-              $scope.delete = function(interview) {
-                var r = window.confirm('Delete interview ' + interview.label + '?');
-                if (r === true) {
-                  ArchObj.delete(interview.id).then(function() {
-                    $state.go('interviews');
-                  });
-                }
-              };
             } ]
       });
     });

@@ -1,33 +1,14 @@
 'use strict';
 
-angular.module('qldarchApp').controller('FirmCtrl', function($scope, $filter, firm, firms, architects, ArchObj, $state) {
+angular.module('qldarchApp').controller('FirmCtrl', function($scope, $filter, firm, firms, architects, ArchObj, $state, Utils) {
   $scope.firm = firm;
-
-  architects = $filter('orderBy')(architects, function(architect) {
-    return architect.label;
-  });
-
-  var dataArchitectSelect = {
-    results : []
-  };
-
-  angular.forEach(architects, function(architect) {
-    dataArchitectSelect.results.push({
-      id : architect.id,
-      text : architect.label
-    });
-  });
 
   $scope.architectSelect = {
     placeholder : 'Select an Architect',
     dropdownAutoWidth : true,
     multiple : true,
-    data : dataArchitectSelect
+    data : Utils.makeSelectOptions(architects)
   };
-
-  firms = $filter('orderBy')(firms, function(firm) {
-    return firm.label;
-  });
 
   $scope.firm.type = 'firm';
 
@@ -57,16 +38,7 @@ angular.module('qldarchApp').controller('FirmCtrl', function($scope, $filter, fi
     }
   };
 
-  var dataFirmSelect = {
-    results : []
-  };
-
-  angular.forEach(firms, function(firm) {
-    dataFirmSelect.results.push({
-      id : firm.id,
-      text : firm.label
-    });
-  });
+  var dataFirmSelect = Utils.makeSelectOptions(firms);
 
   if (angular.isDefined(firm.precededby)) {
     $scope.firm.$precededByFirms = {

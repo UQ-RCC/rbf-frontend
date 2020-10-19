@@ -1,15 +1,4 @@
-<div class="alert alert-warning" ng-show="(Auth.user.role === 'editor' || Auth.user.role === 'admin')&&architect.id" style="margin: 0;">
-  <div class="container">
-    <div>
-      <button class="btn btn-default btn-xs" ui-sref="architect.summary.edit({ architectId: architect.id })">
-        <i class="fa fa-pencil"></i> Edit
-      </button>
-      <button class="btn btn-default btn-xs" ng-click="$parent.delete(architect)" ng-show="Auth.user.role === 'admin'">
-        <i class="fa fa-trash-o"></i> Delete
-      </button>
-    </div>
-  </div>
-</div>
+<editor-tools entity="architect" state="architect" state-delete="architects.queensland"></editor-tools>
 <div class="l-frame l-frame-tight">
   <div class="container">
     <table class="table" ng-show="architectHistoryLog.length">

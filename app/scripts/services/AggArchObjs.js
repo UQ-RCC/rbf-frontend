@@ -8,6 +8,26 @@ angular.module('qldarchApp').factory('AggArchObjs', function($http, $cacheFactor
       $cacheFactory.get('$http').removeAll();
     },
 
+    loadAll : function(opt) {
+      return $http.get(Uris.WS_ROOT + 'archobjs', {params: opt}).then(function(result) {
+        angular.forEach(result.data, function(d){
+          d.typelabel = d.type.charAt(0).toUpperCase() + d.type.slice(1);
+          if (d.type === 'person') {
+            d.typelabel += ' - ' + (d.architect?'Architect':'Other');
+          }
+        });
+        return result.data;
+      }).catch(function() {
+        return [];
+      });
+    },
+
+    loadAllPerson : function() {
+      return this.loadAll({type: 'person', deleted: false, size: 10000});
+    },
+    loadAllArchitects : function() {
+      return this.loadAll({type: 'person', architect: true, deleted: false, size: 10000});
+    },
     loadArchitects : function() {
       return $http.get(Uris.WS_ROOT + 'architects').then(function(result) {
         //console.log('load architects');
@@ -15,6 +35,9 @@ angular.module('qldarchApp').factory('AggArchObjs', function($http, $cacheFactor
       });
     },
 
+    loadAllFirms : function() {
+      return this.loadAll({type: 'firm', deleted: false, size: 10000});
+    },
     loadFirms : function() {
       return $http.get(Uris.WS_ROOT + 'firms').then(function(result) {
         //console.log('load firms');
@@ -22,6 +45,9 @@ angular.module('qldarchApp').factory('AggArchObjs', function($http, $cacheFactor
       });
     },
 
+    loadAllProjects : function() {
+      return this.loadAll({type: 'structure', deleted: false, size: 10000});
+    },
     loadProjects : function() {
       return $http.get(Uris.WS_ROOT + 'projects').then(function(result) {
         //console.log('load projects');

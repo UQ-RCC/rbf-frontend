@@ -50,7 +50,8 @@
                 class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <b class="caret"></b></a>
                 <ul class="dropdown-menu">
                   <li><a>{{ Auth.user.displayName || Auth.user.username }}</a></li>
-                  <li><a ui-sref="user.files.images">My Files</a></li>
+                  <li ng-show="Auth.isEditor()"><a ui-sref="user.contents.owned">My Contents</a></li>
+                  <li ng-show="Auth.isEditor()"><a ui-sref="user.files.images">My Files</a></li>
                   <li role="presentation" class="divider" ng-show="Auth.user.role == 'admin'"></li>
                   <li ng-show="Auth.user.role == 'admin'"><a ui-sref="admin.users">Manage Users</a></li>
                   <li ng-show="Auth.user.role == 'admin'"><a ui-sref="admin.moverelationships">Move Relationships</a></li>

@@ -6,6 +6,7 @@ angular.module('qldarchApp').controller('ArchitectsCtrl',
       $scope.architectRowDisplayCount = DEFAULT_ARCHITECT_ROW_COUNT;
       $scope.$stateParams = $stateParams;
       $scope.indexes = {
+        '#' : false,
         'A' : false,
         'B' : false,
         'C' : false,
@@ -39,9 +40,11 @@ angular.module('qldarchApp').controller('ArchitectsCtrl',
       }
 
       architects = $filter('filter')(architects, function(architect) {
-        $scope.indexes[architect.lastname.substring(0, 1).toUpperCase()] = true;
+        var firstLetter = (architect.lastname||'').substring(0, 1).toUpperCase();
+        if (!isLetter(firstLetter)) firstLetter = '#';
+        $scope.indexes[firstLetter] = true;
         if ($stateParams.index && $stateParams.index.length === 1) {
-          if (isLetter($stateParams.index) && architect.lastname.substring(0, 1).toUpperCase() === $stateParams.index) {
+          if (firstLetter === $stateParams.index) {
             return true;
           }
           return false;

@@ -1,3 +1,4 @@
+'use strict';
 angular.module('qldarchApp').directive('validdate', function (){ 
   return {
     require: 'ngModel',
@@ -9,7 +10,7 @@ angular.module('qldarchApp').directive('validdate', function (){
         }
         var parts = viewValue.split('-');
         while (parts.length < 3) parts.unshift('01');
-        var d = new Date(+parts[2], parts[1] - 1, +parts[0])
+        var d = new Date(+parts[2], parts[1] - 1, +parts[0]);
         return !!d && d.getMonth() == parts[1] - 1 && d.getDate() == +parts[0] && d.getFullYear() == +parts[2];
       };
     }

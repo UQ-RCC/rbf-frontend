@@ -11,18 +11,7 @@
     <h1>{{ article.label }}</h1>
   </div>
 </div>
-<div class="alert alert-warning" ng-show="(Auth.user.role === 'editor' || Auth.user.role === 'admin')&&article.id" style="margin: 0;">
-  <div class="container">
-    <div>
-      <button class="btn btn-default btn-xs" ui-sref="article.edit({ articleId: article.id })">
-        <i class="fa fa-pencil"></i> Edit
-      </button>
-      <button class="btn btn-default btn-xs" ng-click="delete(article)" ng-show="Auth.user.role === 'admin'">
-        <i class="fa fa-trash-o"></i> Delete
-      </button>
-    </div>
-  </div>
-</div>
+<editor-tools entity="article" state="article" state-summary="article"></editor-tools>
 <div class="l-frame l-frame-tight">
   <div class="container">
     <table class="table" ng-show="articleHistoryLog.length">

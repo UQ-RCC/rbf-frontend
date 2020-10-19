@@ -19,12 +19,12 @@ angular.module('qldarchApp').config(function($stateProvider) {
           }
         });
         angular.forEach(filteredrelationships, function(structure) {
+          if (structure.subjecttype === 'structure') {
+            structure.structureId = structure.subject;
+          } else {
+            structure.structureId = structure.object;
+          }
           angular.forEach(allstructures, function(s) {
-            if (structure.subjecttype === 'structure') {
-              structure.structureId = structure.subject;
-            } else {
-              structure.structureId = structure.object;
-            }
             if (structure.structureId === s.id) {
               if (angular.isDefined(s.media)) {
                 structure.media = s.media;

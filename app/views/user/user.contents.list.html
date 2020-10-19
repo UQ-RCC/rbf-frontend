@@ -1,0 +1,49 @@
+<div>
+  <div class="alert alert-warning" style="margin: 0;">
+    <div class="container">
+      <div class="btn-group">
+        <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+          <i class="fa fa-plus"></i> New Content&nbsp; &nbsp;<span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="addNew">
+          <li><a ui-sref="architect.summary.edit({})" ui-sref-opts="{inherit:false}">Architect</a></li>
+          <li><a ui-sref="firm.summary.edit({})">Firm</a></li>
+          <li><a ui-sref="structure.summary.edit({})">Project</a></li>
+          <li><a ui-sref="other.summary.edit({})">Other</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="l-frame">
+    <div class="container">
+      <table class="table" ng-if="contents.length">
+        <thead>
+          <tr>
+            <th ng-repeat="h in headers">
+              <a href="#" ng-click="changeSort(h.name)">
+                {{h.label}} <i ng-class="sortIconClass(h.name)"></i>
+              </a> 
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="c in contents | orderBy:orderByField:reverseSort">
+            <td ng-if="headers[0].name === 'ownername'">
+              {{c.ownername}}
+            </td>
+            <td>
+              <a ui-sref="{{getLink(c)}}">{{(!c.label || !c.label.trim()) ? '(no label)' : c.label}}</a>
+            </td>
+            <td>
+              {{c.typelabel}}
+            </td>
+            <td>
+              {{c.pubts}}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      
+    </div>
+  </div>
+</div>

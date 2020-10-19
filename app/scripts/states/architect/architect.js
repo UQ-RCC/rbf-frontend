@@ -25,7 +25,7 @@ angular.module('qldarchApp').config(function($stateProvider) {
         if (architect.interviews) {
           var interviews = [];
           angular.forEach(architect.interviews, function(interview) {
-            ArchObj.load(interview).then(function(data) {
+            ArchObj.loadPlain(interview).then(function(data) {
               interviews.push(data);
             }).catch(function() {
               //console.log('unable to load interview ArchObj');
@@ -58,15 +58,6 @@ angular.module('qldarchApp').config(function($stateProvider) {
       $scope.architect = architect;
       $scope.interviews = interviews;
       $scope.entity = architect;
-
-      $scope.delete = function(architect) {
-        var r = window.confirm('Delete architect ' + architect.label + '?');
-        if (r === true) {
-          ArchObj.delete(architect.id).then(function() {
-            $state.go('architects.queensland');
-          });
-        }
-      };
     } ]
   });
 });
