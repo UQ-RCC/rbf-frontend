@@ -17,8 +17,10 @@ angular.module('qldarchApp').config(function($stateProvider) {
           return {};
         });
       } ],
-      relationshipOptions : [ 'RelationshipOptions', function(RelationshipOptions) {
-        return RelationshipOptions.all();
+      relationshipOptions : [ 'Auth', 'RelationshipOptions', function(Auth, RelationshipOptions) {
+        return Auth.status().then(function(){
+          return RelationshipOptions.all();
+        });
       } ]
     }
   });

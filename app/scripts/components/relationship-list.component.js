@@ -1,7 +1,7 @@
 'use strict';
 (function(angular) {
 
-function RelationshipListController($scope, $element, $attrs, $q, RelationshipOptions, Utils) {
+function RelationshipListController($scope, $element, $attrs, $q, Utils) {
   var ctrl = this;
 
   ctrl.$postLink = function() {
@@ -18,30 +18,28 @@ function RelationshipListController($scope, $element, $attrs, $q, RelationshipOp
    *          exchange The exchange to add the relationship
    */
   ctrl.showAddRelationship = function() {
-    RelationshipOptions.all().then(function(opt) {
-      ctrl.isAddingRelationship = true;
-      ctrl.relationship = {};
-      ctrl.typesSelect = ctrl.typesSelect || {
-        placeholder : 'Select a Relationship Type',
-        dropdownAutoWidth : false,
-        multiple : false,
-        initSelection : true, // https://github.com/angular-ui/ui-select2/issues/153
-        data : opt.types
-      };
-    
-      ctrl.entitiesSelect = ctrl.entitiesSelect || {
-        placeholder : 'Select an Entity',
-        dropdownAutoWidth : false,
-        multiple : false,
-        initSelection : true,// https://github.com/angular-ui/ui-select2/issues/153
-        data : opt.entities
-      };
+    ctrl.isAddingRelationship = true;
+    ctrl.relationship = {};
+    ctrl.typesSelect = ctrl.typesSelect || {
+      placeholder : 'Select a Relationship Type',
+      dropdownAutoWidth : false,
+      multiple : false,
+      initSelection : true, // https://github.com/angular-ui/ui-select2/issues/153
+      data : ctrl.types
+    };
+  
+    ctrl.entitiesSelect = ctrl.entitiesSelect || {
+      placeholder : 'Select an Entity',
+      dropdownAutoWidth : false,
+      multiple : false,
+      initSelection : true,// https://github.com/angular-ui/ui-select2/issues/153
+      data : ctrl.entities
+    };
 
-      if (ctrl.defaultSubjectId != null) {
-        ctrl.relationship.subject = Utils.findEntity(opt.entities, ctrl.defaultSubjectId);
-      }
-      ctrl.onAdding();
-    });
+    if (ctrl.defaultSubjectId != null) {
+      ctrl.relationship.subject = Utils.findEntity(ctrl.entities, ctrl.defaultSubjectId);
+    }
+    ctrl.onAdding();
   };
 
   /**
@@ -127,8 +125,8 @@ angular.module('qldarchApp').component('relationshipList', {
   controller: RelationshipListController,
   bindings: {
     relationships: '<',
-    //entities: '<',
-    //types: '<',
+    entities: '<',
+    types: '<',
     defaultSubjectId: '<',
     onCreate: '&',
     onDelete: '&',

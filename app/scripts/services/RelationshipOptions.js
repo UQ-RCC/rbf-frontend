@@ -11,8 +11,8 @@ angular.module('qldarchApp').service('RelationshipOptions', function Relationshi
     },
 
     entities: function() {
-      var entities = [];
-      if (!Auth.isEditor()) return $q.when(entities);
+      //var entities = [];
+      if (!Auth.isEditor()) return $q.when([]);
       return AggArchObjs.loadAll({
         exctype: ['article','interview'],
         deleted: false,
@@ -22,6 +22,7 @@ angular.module('qldarchApp').service('RelationshipOptions', function Relationshi
           d.label = s.label;
           d.type = s.type;
           d.architect = s.architect;
+          return d;
         });
       });
 
