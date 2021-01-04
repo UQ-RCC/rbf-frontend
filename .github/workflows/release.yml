@@ -1,0 +1,44 @@
+name: CI
+
+# Run this workflow every time a new commit pushed to your repository
+on: 
+  push:
+    tags:
+    - v*
+
+jobs:
+  build:
+    name: Build and release version
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: get version
+        run: |
+          # Strip git ref prefix from version
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          echo "TAG_NAME=$VERSION" >> $GITHUB_ENV
+          # Strip "v" prefix from tag name
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          echo "VERSION_NAME=$VERSION" >> $GITHUB_ENV
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+
+      - name: Setup build tools
+        run: npm install -g yo bower grunt-cli generator-karma generator-angular
+      
+      - name: Build with Grunt
+        run: npm install && bower install && grunt build --force
+
+      - uses: meeDamian/github-release@2.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ env.TAG_NAME }}
+          name: ${{ env.TAG_NAME }}
+          gzip: false
+          allow_override: true
+          files: frontend-${{ env.VERSION_NAME }}.tar.gz
