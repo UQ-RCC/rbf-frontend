@@ -19,14 +19,14 @@
     <!-- /Delete button -->
     &nbsp; | &nbsp;
     <span ng-if="$ctrl.entity.pubts">
-      <button class="btn btn-default btn-xs" ng-click="$ctrl.unpublish()">
+      <button class="btn btn-default btn-xs" ng-click="$ctrl.unpublish()" ng-if="$ctrl.allowDelete()">
         <i class="fa fa-eye-slash"></i> Unpublish
       </button>
       &nbsp;
       <span class="label label-success">Published on {{$ctrl.entity.pubts}}</span>
     </span>
     <span ng-if="!$ctrl.entity.pubts">
-      <button class="btn btn-default btn-xs" ng-click="$ctrl.publish()">
+      <button class="btn btn-default btn-xs" ng-click="$ctrl.publish()" ng-if="$ctrl.allowDelete()">
         <i class="fa fa-eye"></i> Publish
       </button>
       &nbsp;

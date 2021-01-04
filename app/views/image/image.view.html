@@ -46,7 +46,7 @@
         <button class="btn btn-default btn-xs" ng-click="$state.go('image.edit', {imageId: image.id})">
           <i class="fa fa-pencil"></i> Edit image
         </button>
-        <button class="btn btn-default btn-xs" ng-click="delete(image)" ng-if="Auth.canDelete()">
+        <button class="btn btn-default btn-xs" ng-click="delete(image)" ng-if="Auth.canDelete(image.owner)">
           <i class="fa fa-trash-o"></i> Delete image
         </button>
       </div>

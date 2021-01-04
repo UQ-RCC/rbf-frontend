@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('qldarchApp').controller('ArticleCtrl', function($scope, $http, article, ArchObj, $state, toaster, Uris, relationshipOptions) {
+angular.module('qldarchApp').controller('ArticleCtrl', function($scope, $http, $q, article, ArchObj, $state, toaster, Uris, relationshipOptions, File) {
   $scope.article = article;
   $scope.relationshipOptions = relationshipOptions;
 
@@ -8,6 +8,12 @@ angular.module('qldarchApp').controller('ArticleCtrl', function($scope, $http, a
     $state.go('article', {
       articleId : article.id
     });
+  };
+
+  $scope.delete = function(article) {
+    return $q.all(_.map(article.media, function(m){ 
+      return File.delete(m.id);
+    }));
   };
 
   $scope.updateArticle = function(data) {

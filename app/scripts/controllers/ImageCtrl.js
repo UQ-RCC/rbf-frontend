@@ -1,7 +1,6 @@
 'use strict';
 
 angular.module('qldarchApp').controller('ImageCtrl', function($stateParams, $scope, $filter, image, images, depicts, $state, File, ImageTypes) {
-
   $scope.image = image;
 
   images = $filter('orderBy')(images, function(img) {

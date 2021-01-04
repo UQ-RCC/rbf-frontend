@@ -25,13 +25,15 @@ function EditorToolsController($scope, $element, $attrs, $q, $state, Auth, ArchO
     return Auth.user.role === 'admin';
   };
   ctrl.allowDelete = function() {
-    return Auth.canDelete() || Auth.user.id === ctrl.entity.owner ;
+    return Auth.canDelete(ctrl.entity.owner);
   };
 
   ctrl.delete = function() {
     var r = window.confirm('Delete ' + ctrl.label + ' ' + ctrl.entity.label + '?');
     if (r === true) {
-      ArchObj.delete(ctrl.entity.id).then(function() {
+      $q.when(ctrl.onDelete({data:ctrl.entity})).then(function() {
+        return ArchObj.delete(ctrl.entity.id);
+      }).then(function() {
         $state.go(ctrl.stateDelete);
       });
     }
