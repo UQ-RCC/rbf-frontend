@@ -9,10 +9,12 @@ angular.module('qldarchApp').service('Auth', function Auth($http, Uris, $q) {
         that.success = true;
         that.user = status.data;
         //console.log('Auth is', that.user.username, status.data.username);
-        return true;
+        return status.data;
       } else {
+        return {};
+        //console.log('reject');
         //console.log('rejecting!');
-        return $q.reject();
+        //return $q.reject();
       }
     });
   };
