@@ -33,14 +33,8 @@ angular.module('qldarchApp').controller('OtherCtrl', function($scope, $state, ot
     text : 'Topic'
   } ];
 
-  $scope.other.$type = null;
-  angular.forEach(othertypes, function(othertype) {
-    if (other.type === othertype.id) {
-      $scope.other.$type = {
-        id : othertype.id,
-        text : othertype.text
-      };
-    }
+  $scope.other.$type = _.find(othertypes, function(othertype) {
+    return other.type === othertype.id;
   });
 
   $scope.typeSelect = {

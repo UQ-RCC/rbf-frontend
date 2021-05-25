@@ -18,20 +18,21 @@
               <label>Type <i class="fa fa-asterisk fa-asterisk-required"></i></label>
               <div ui-select2="typeSelect" ng-model="other.$type" class="form-control"></div>
             </div>
-            <div class="form-group">
-              <label>Name <i class="fa fa-asterisk fa-asterisk-required"></i></label> <input type="text" ng-model="other.label" class="form-control"
-                placeholder="Name">
+            <div class="form-group" ng-if="other.$type.id!=='person'">
+              <label>Name <i class="fa fa-asterisk fa-asterisk-required"></i></label> 
+              <input type="text" ng-model="other.label" class="form-control" placeholder="Name" required>
             </div>
-            <div ng-show="other.firstname" class="form-group">
-              <label>First Name</label> <input type="text" ng-model="other.firstname" class="form-control" placeholder="First Name"
-                style="margin-bottom: 8px;"> <label>Last Name</label> <input type="text" ng-model="other.lastname" class="form-control"
-                placeholder="Last Name">
+            <div class="form-group" ng-if="other.$type.id==='person'">
+              <label>First Name <i class="fa fa-asterisk fa-asterisk-required"></i></label> 
+              <input type="text" ng-model="other.firstname" class="form-control" placeholder="First Name" required>
+              <label>Last Name</label>
+              <input type="text" ng-model="other.lastname" class="form-control" placeholder="Last Name">
             </div>
             <div class="form-group">
               <label for="summary">Summary</label>
               <textarea ui-tinymce="tinymceOptions" rows="10" id="summary" class="form-control" placeholder="Summary" ng-model="other.summary"></textarea>
             </div>
-            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="submit" class="btn btn-primary" ng-disabled="form.$invalid">Save</button>
             <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
           </div>
         </form>

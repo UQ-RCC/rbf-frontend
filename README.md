@@ -12,11 +12,14 @@ Running the Front End locally (pointing at qldarch server)
 
 ## 2. Installing Project Dependencies 
 * Run `npm install`
-* Run `bower install`
+* Run `npx bower install`
 
 ## 3. Running it Locally 
-* Run `grunt server`
+* Run `npx grunt server`
 
 ## 4. Build
-* Run `grunt build --force`
+* Run `npx grunt build --force`
 
+## 5. Clean up existing build
+* Run `npx grunt clean`
+* Run `npx bower clean`

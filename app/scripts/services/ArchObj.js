@@ -82,13 +82,13 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
 
     updateArchitect : function(data) {
       var payload = angular.copy(data);
+      payload.label = payload.firstname + ' ' + payload.lastname;
       // Remove any extra information
       delete payload.architect;
       delete payload.associatedMedia;
       delete payload.created;
       delete payload.id;
       delete payload.interviews;
-      delete payload.label;
       delete payload.media;
       delete payload.owner;
       delete payload.relationships;
@@ -189,13 +189,13 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
     updateFirm : function(data) {
       var payload = angular.copy(data);
       payload.start = YYYYMMDDdate.formatDate(payload.start);
-      if (payload.start === null) {
-        delete payload.start;
-      }
+      // if (payload.start === null) {
+      //   delete payload.start;
+      // }
       payload.end = YYYYMMDDdate.formatDate(payload.end);
-      if (payload.end === null) {
-        delete payload.end;
-      }
+      // if (payload.end === null) {
+      //   delete payload.end;
+      // }
       if (payload.$precededByFirms !== null && angular.isDefined(payload.$precededByFirms)) {
         payload.precededby = payload.$precededByFirms.id;
       }
@@ -685,6 +685,8 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
       if (payload.$type !== null && angular.isDefined(payload.$type)) {
         payload.type = payload.$type.id;
       }
+      if (payload.firstname || payload.lastname) payload.label = payload.firstname + ' ' + payload.lastname;
+      payload.label = payload.label.trim();
       delete payload.$type;
       // Remove any extra information
       delete payload.locked;
@@ -728,6 +730,8 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
       if (payload.$type !== null && angular.isDefined(payload.$type)) {
         payload.type = payload.$type.id;
       }
+      if (payload.firstname || payload.lastname) payload.label = payload.firstname + ' ' + payload.lastname;
+      payload.label = payload.label.trim();
       delete payload.$type;
       // Remove any extra information
       delete payload.locked;
