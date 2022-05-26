@@ -145,6 +145,7 @@ angular.module('qldarchApp').config(
                                 });
                               } else if (item.type === 'article') {
                                 path = '/article?articleId=';
+                                item.published = item.published.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3");
                               } else if (item.category === 'media') {
                                 path = '/media/download/';
                               } else if (item.type === 'interview') {

@@ -12,7 +12,8 @@
         return $http.get(url + '&pc=' + resp.data.hits).then(function(response) {
           return _.map(response.data.documents, function(article) {
             return _.assign({}, article, {
-              id : article.id
+              id : article.id,
+              published: article.published.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")
             });
           });
         });
