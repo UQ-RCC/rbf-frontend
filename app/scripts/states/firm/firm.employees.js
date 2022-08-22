@@ -19,18 +19,11 @@ angular.module('qldarchApp').config(function($stateProvider) {
           }
         });
         angular.forEach(employedby, function(employee) {
-          angular.forEach(architects, function(architect) {
-            if (employee.subjecttype === 'person') {
-              employee.personId = employee.subject;
-            } else {
-              employee.personId = employee.object;
-            }
-            if (employee.personId === architect.id) {
-              if (angular.isDefined(architect.media)) {
-                employee.media = architect.media;
-              }
-            }
-          });
+          if (employee.subjecttype === 'person') {
+            employee.personId = employee.subject;
+          } else {
+            employee.personId = employee.object;
+          }
         });
         employedby = $filter('orderBy')(employedby, function(employee) {
           return (employee.personlabel || '');
