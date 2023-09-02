@@ -135,7 +135,7 @@ angular.module('qldarchApp').controller(
           clearTimeout($scope.typingTimer);
           $scope.typingTimer = setTimeout(function() {
            // $.getJSON('https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyByxzrKtppGuOxwzav-P52wTcfXcG1IJz0&address=' + $scope.structure.location,
-	      $.getJSON('http://nominatim.openstreetmap.org/search?q=' + $scope.structure.location+'&format=json',
+	      $.getJSON('https://nominatim.openstreetmap.org/search?q=' + $scope.structure.location+'&format=json',
                 function(data) {
               /*    if (data.results.length === 1) {
                     if ((structure.latitude !== data.results[0].geometry.location.lat) ||
