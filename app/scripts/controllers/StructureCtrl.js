@@ -155,7 +155,7 @@ angular.module('qldarchApp').controller(
 			 }
 		  }
                 });
-          }, 3000);
+          }, 2000);
         }
       });
 
