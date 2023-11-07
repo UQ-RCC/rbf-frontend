@@ -146,7 +146,7 @@ angular.module('qldarchApp').controller(
                       $('#LNG').val(data.results[0].geometry.location.lng);
                     }
                   }*/
-		   if (data.length === 1) {
+		   if (data.length > 0) {
 			 if ((structure.latitude !== data[0].lat) || (structure.longitude !== data[0].lon)) {
 				structure.latitude = data[0].lat;
 				structure.longitude = data[0].lon;
@@ -155,7 +155,7 @@ angular.module('qldarchApp').controller(
 			 }
 		  }
                 });
-          }, 3000);
+          }, 2000);
         }
       });
 
