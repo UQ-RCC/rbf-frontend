@@ -8,17 +8,21 @@
     function getArticles(query) {
       var syntax = '* AND (type:article OR type:Article) AND (category:archobj OR category:media)';
       var url = Uris.WS_ROOT + 'search?q=' + query.replace(WordService.spclCharsLucene, '') + syntax + '&p=0';
+      console.log(url)
       return $http.get(url + '&pc=0').then(function(resp) {
         return $http.get(url + '&pc=' + resp.data.hits).then(function(response) {
           return _.map(response.data.documents, function(article) {
+            console.log(article)
             return _.assign({}, article, {
               id : article.id,
-              published: article.published.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")
+              published: (article.published)? article.published.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3") : null
             });
           });
         });
       });
-    }
+    } 
+
+   
 
     function getArticlesInterviews(query) {
       var syntax = '* AND (type:article OR type:interview) AND category:archobj';
