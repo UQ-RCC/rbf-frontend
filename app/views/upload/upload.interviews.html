@@ -73,11 +73,11 @@
         </div>
         <div class="form-group">
           <label for="">Date of Interview</label>
-          <div>{{ interview.created | date:'dd-MM-yyyy' }}</div>
+          <div>{{ interview.interviewdate | date:'dd-MM-yyyy' }}</div>
           <div class="well well-sm">
-            <div uib-datepicker ng-model="interview.created" show-weeks="false"></div>
-            <div style="margin-top: 10px;" ng-show="interview.created">
-              <button type="button" class="btn btn-sm btn-primary" ng-click="interview.created = ''">Clear</button>
+            <div uib-datepicker ng-model="interview.interviewdate" show-weeks="false"></div>
+            <div style="margin-top: 10px;" ng-show="interview.interviewdate">
+              <button type="button" class="btn btn-sm btn-primary" ng-click="clearDate()">Clear</button>
             </div>
           </div>
         </div>

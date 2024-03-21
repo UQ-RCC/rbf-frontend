@@ -43,7 +43,7 @@
         <h5 ng-click="isShowingInterviewDetails = !isShowingInterviewDetails" class="pull-left"
           style="margin: 0; padding: 0; position: relative; top: 3px;">
           <i class="fa fa-fw" ng-class="{'fa-chevron-right': !isShowingInterviewDetails, 'fa-chevron-down': isShowingInterviewDetails}"></i>{{
-          interview.created | date:'dd MMMM yyyy' }}
+          interview.interviewdate | date:'dd MMMM yyyy' }}
         </h5>
         <div class="text-center">
           <span ng-repeat="interviewee in interview.interviewee" style="font-weight: bold;"> <a ng-if="interviewee.architect"

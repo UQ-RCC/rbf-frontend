@@ -391,6 +391,8 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
       // delete payload.longitude;
       // delete payload.demolished;
       // delete payload.typologies;
+      console.log("payload before request")
+      console.log(payload)
       return $http({
         method : 'POST',
         url : path + data.id,
@@ -564,9 +566,11 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
 
     createInterview : function(data) {
       var payload = angular.copy(data);
-      payload.created = YYYYMMDDdate.formatDate(payload.created);
-      if (payload.created === null) {
-        delete payload.created;
+      payload.interviewdate = YYYYMMDDdate.formatDate(payload.interviewdate);
+      console.log("payload.created in create")
+      console.log(payload.interviewdate )
+      if (payload.interviewdate === null) {
+        delete payload.interviewdate;
       }
       payload.type = 'interview';
       payload.label = payload.$interviewees[0].text + ' interview';
@@ -600,6 +604,8 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
       // delete payload.interviewer;
       // delete payload.location;
       // delete payload.created;
+      console.log("within create - payload")
+      console.log(payload)
       return $http({
         method : 'PUT',
         url : path,
@@ -613,20 +619,27 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
         data : payload
       }).then(function(response) {
         angular.extend(data, response.data);
+        console.log("success payload-create")
+        console.log(response.data)
+        console.log(data)
         toaster.pop('success', data.label + ' created');
         //console.log('created interview id: ' + data.id);
         return data;
       }, function(response) {
         toaster.pop('error', 'Error occured', response.data.msg);
-        //console.log('error message: ' + response.data.msg);
+        console.log('error message: ' + response.data.msg);
       });
     },
 
     updateInterview : function(data) {
       var payload = angular.copy(data);
-      payload.created = YYYYMMDDdate.formatDate(payload.created);
-      if (payload.created === null) {
-        delete payload.created;
+      console.log("updateInterview payload")
+      console.log(payload)
+
+      payload.interviewdate = YYYYMMDDdate.formatDate(new Date(payload.interviewdate));
+      console.log(typeof(payload.interviewdate))
+      if (payload.interviewdate === null) {
+        delete payload.interviewdate;
       }
       if (payload.$interviewees !== null && angular.isDefined(payload.$interviewees)) {
         payload.interviewee = [];
@@ -644,20 +657,25 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
       delete payload.$interviewees;
       delete payload.$interviewers;
       delete payload.$youtubeUrl;
-      delete payload.id;
-      delete payload.label;
-      delete payload.media;
-      delete payload.locked;
-      delete payload.owner;
-      delete payload.relationships;
-      delete payload.associatedMedia;
-      delete payload.transcript;
+      //delete payload.id;
+      //delete payload.label;
+      //delete payload.media;
+      //delete payload.locked;
+      //delete payload.owner;
+      //delete payload.relationships;
+      //delete payload.associatedMedia;
+      //delete payload.transcript;
       // delete payload.version;
       // delete payload.type;
       // delete payload.interviewee;
       // delete payload.interviewer;
       // delete payload.location;
       // delete payload.created;
+
+      console.log("payload after delete")
+      console.log(payload)
+      console.log(payload.transcript)
+
       return $http({
         method : 'POST',
         url : path + data.id,
@@ -672,11 +690,11 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
       }).then(function(response) {
         angular.extend(data, response.data);
         toaster.pop('success', data.label + ' updated');
-        //console.log('updated interview id: ' + data.id);
+        console.log('updated interview id: ' + data.id);
         return data;
       }, function(response) {
         toaster.pop('error', 'Error occured', response.data.msg);
-        //console.log('error message: ' + response.data.msg);
+        console.log('error message: ' + response.data.msg);
       });
     },
 
@@ -840,7 +858,8 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
 
     loadInterviewObj : function(interviewId) {
       return $http.get(path + interviewId).then(function(result) {
-        //console.log('load interview object id: ' + interviewId);
+        console.log('load interview object id: ' + path + interviewId);
+        console.log('load transcript ' + result);
         return RelationshipLabels.load().then(function(response) {
           angular.forEach(result.data.transcript, function(exchange) {
             exchange.startTime = getStartTime(exchange);

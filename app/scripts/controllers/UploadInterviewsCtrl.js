@@ -4,6 +4,12 @@ angular.module('qldarchApp').controller('UploadInterviewsCtrl',
     function($scope, interview, person, $filter, $cacheFactory, File, toaster, $state, $stateParams, ArchObj, Utils) {
 
       $scope.interview = interview;
+      
+      
+
+      $scope.clearDate = function() {
+        $scope.interview.interviewdate = ''; // Clear the date
+      };
 
       interview.media = $filter('orderBy')(interview.media, function(med) {
         return (med.preferred || '');
@@ -70,6 +76,7 @@ angular.module('qldarchApp').controller('UploadInterviewsCtrl',
       }
 
       function uploadTranscript(data, file) {
+        
         $scope.expTranscript = {};
         $scope.expTranscript.$uploadFile = file;
         $scope.myModelObj = {
@@ -82,16 +89,17 @@ angular.module('qldarchApp').controller('UploadInterviewsCtrl',
           $scope.expTranscript.$uploadFile.percent = parseInt(100.0 * evt.loaded / evt.total);
         }).success(function(res) {
           $scope.expTranscript.$uploadFile.isComplete = $scope.expTranscript.$uploadFile.percent === 100;
-          //console.log('transcript file upload succeeded');
+          console.log('transcript file upload succeeded');
           return res;
         }).error(function(err) {
           toaster.pop('error', 'Error occured', err.data.msg);
-          //console.log('transcript file upload failed: ' + err.data.msg);
+          console.log('transcript file upload failed: ' + err.data.msg);
           return err;
         });
       }
 
       function goToInterview(id) {
+        console.log("redirect to invterview")
         $state.go('interview', {
           interviewId : id
         });
@@ -108,7 +116,9 @@ angular.module('qldarchApp').controller('UploadInterviewsCtrl',
         if (data.id) {
           ArchObj.updateInterview(data).then(function() {
             if ($mediafile) {
+              console.log("meadia presented " +data.id)
               var filetype = $mediafile[0].type;
+              console.log("meadia presented " +filetype)
               if (filetype.indexOf('video') === -1 && filetype.indexOf('audio') === -1) {
                 goToInterview(data.id);
               } else {
@@ -120,6 +130,7 @@ angular.module('qldarchApp').controller('UploadInterviewsCtrl',
                 }
                 uploadMedia(data, $mediafile).then(function() {
                   if ($transcriptfile) {
+                    console.log("transcript presented")
                     uploadTranscript(data, $transcriptfile).then(function() {
                       goToInterview(data.id);
                     });
@@ -143,6 +154,8 @@ angular.module('qldarchApp').controller('UploadInterviewsCtrl',
         } else {
           ArchObj.createInterview(data).then(function(response) {
             if ($mediafile) {
+              console.log("meadia presented- new")
+              console.log(data)
               var filetype = $mediafile[0].type;
               if (filetype.indexOf('video') === -1 && filetype.indexOf('audio') === -1) {
                 goToInterview(response.id);
@@ -155,7 +168,12 @@ angular.module('qldarchApp').controller('UploadInterviewsCtrl',
                 }
                 uploadMedia(response, $mediafile).then(function() {
                   if ($transcriptfile) {
+                    console.log("transcript presented-new")
+                    console.log(response)
+                    console.log($transcriptfile)
                     uploadTranscript(response, $transcriptfile).then(function() {
+                      console.log("upload transcript then")
+                      console.log(response.id)
                       goToInterview(response.id);
                     });
                   } else {
