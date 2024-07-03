@@ -1,8 +1,10 @@
 'use strict';
 
-angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $q, Uris, RelationshipLabels, toaster, CreateRelationship, YYYYMMDDdate) {
+angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $q, Uris, RelationshipLabels, toaster, CreateRelationship, YYYYMMDDdate, $upload) {
   /* globals $:false */
   var path = Uris.WS_ROOT + 'archobj/';
+  //var bulkpath = Uris.WS_ROOT + 'archobjbulk/';
+  //var bulkpath = Uris.WS_ROOT + 'media/';
 
   function getStartTime(exchange) {
     if (!exchange.time) {
@@ -39,7 +41,10 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
 
     createArchitect : function(data) {
       var payload = angular.copy(data);
-      payload.label = payload.firstname + ' ' + payload.lastname;
+      if (payload.firstname != null && payload.lastname !=null) {
+        payload.label = payload.firstname + ' ' + payload.lastname;
+
+      }
       payload.architect = true;
       // Remove any extra information
       delete payload.associatedMedia;
@@ -122,7 +127,10 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
     },
 
     createFirm : function(data) {
+
       var payload = angular.copy(data);
+      console.log("create firm payload")
+      console.log(payload)
       if (payload.$employedArchitects !== null && angular.isDefined(payload.$employedArchitects)) {
         payload.employees = [];
         angular.forEach(payload.$employedArchitects, function(architect) {
@@ -182,6 +190,17 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
         return data;
       }, function(response) {
         toaster.pop('error', 'Error occured', response.data.msg);
+        //console.log('error message: ' + response.data.msg);
+      });
+    },
+
+    
+
+    loadSimilarity : function(label) {
+      return $http.get(path +'byname/'+ label).then(function(result) {
+        return result.data;
+      }, function(response) {
+        //toaster.pop('error', 'Error occured', response.data.msg);
         //console.log('error message: ' + response.data.msg);
       });
     },
@@ -246,6 +265,7 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
 
     createStructure : function(data) {
       var payload = angular.copy(data);
+      
       if (payload.$typologies !== null && angular.isDefined(payload.$typologies)) {
         payload.typologies = [];
         angular.forEach(payload.$typologies, function(typology) {
@@ -267,6 +287,10 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
       if (payload.completion === null) {
         delete payload.completion;
       }
+
+      console.log("before delete in create")
+      console.log(payload)
+      console.log(payload.relationships)
       // Remove any extra information
       delete payload.$associatedFirm;
       delete payload.$associatedArchitects;
@@ -293,6 +317,9 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
       // delete payload.longitude;
       // delete payload.australian;
       // delete payload.demolished;
+
+      console.log("after delete in create")
+      console.log(payload)
       return $http({
         method : 'PUT',
         url : path,
@@ -470,6 +497,116 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
         toaster.pop('error', 'Error occured', response.data.msg);
         //console.log('error message: ' + response.data.msg);
       });
+    },
+
+    createBulkStructures : function (data) {
+      var payload = angular.copy(data);
+      var projects = payload.projects
+      console.log("projects before")
+      console.log(projects)
+      let projectList = []
+      angular.forEach(projects, function (project) {
+        console.log(JSON.stringify(project))
+        projectList.push(JSON.stringify(project))
+      })
+      payload.projects = projectList;
+      
+      /* if (payload.$typologies !== null && angular.isDefined(payload.$typologies)) {
+        payload.typologies = [];
+        angular.forEach(payload.$typologies, function(typology) {
+          payload.typologies.push(typology.text);
+        });
+      } */
+      var relationships = [];
+      if (payload.$associatedFirm !== null && angular.isDefined(payload.$associatedFirm)) {
+        angular.forEach(payload.$associatedFirm, function(firm) {
+          relationships.push(firm.id);
+        });
+      }
+      if (payload.$associatedArchitects !== null && angular.isDefined(payload.$associatedArchitects)) {
+        angular.forEach(payload.$associatedArchitects, function(architect) {
+          relationships.push(architect.id);
+        });
+      }
+      
+
+      console.log("payload before bulk request")
+      console.log(payload)
+      
+      console.log(relationships)
+      return $http({
+        method: 'POST',
+        url : path + 'upload', 
+        headers : {
+          'Content-Type' : 'application/x-www-form-urlencoded'
+        },
+        data : payload, 
+        withCredentials : true,
+        transformRequest : function(obj) {
+          return $.param(obj, true);
+        },
+
+    }).then(function(response) {
+      console.log('after rest call' +response);
+      console.log(response);
+      toaster.pop('success', ' Projects created');
+      var dataList = [];
+      if (response.data.length > 0) {
+        var objList = response.data;
+        angular.forEach(objList, function(d) {
+          //angular.extend(data, d);
+          //console.log(data)
+          console.log(d)
+          if (relationships.length > 0) {
+            var promises = [];
+            angular.forEach(relationships, function(r) {
+              console.log("each relationship")
+              console.log(r)
+              console.log(d)
+              var relationship = {};
+              relationship.$source = 'structure';
+              relationship.$type = {
+                id : 'WorkedOn'
+              };
+              relationship.$subject = {
+                id : r
+              };
+              relationship.$object = {
+                id : d.id
+              };
+              var promise = CreateRelationship.createRelationship(relationship).then(function(rsp) {
+                return rsp;
+              }, function(rsp) {
+                return rsp;
+              });
+              promises.push(promise);
+            });
+            $q.all(promises).then(function() {
+              //toaster.pop('success', 'Associated entities added');
+              dataList.push(d);
+              //return data;
+            });
+          } /* else {
+            //return data;
+            toaster.pop('success', 'Error occured', response);
+
+          } */
+
+        });
+        console.log("data list");
+        console.log(dataList);
+        console.log(dataList.length);
+        /* if(dataList) {
+          toaster.pop('success', 'Associated entities added');
+        } */
+        return dataList;
+      }
+    }, function(response) {
+      toaster.pop('error', 'Error occured', response);
+      console.log(response);
+    });
+     
+      
     },
 
     createArticle : function(data) {

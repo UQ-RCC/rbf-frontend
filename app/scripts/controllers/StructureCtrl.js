@@ -2,10 +2,16 @@
 
 angular.module('qldarchApp').controller(
     'StructureCtrl',
-    function($scope, structure, designers, ArchObj, firms, architects, $filter, buildingTypologies, $state, $q, $stateParams, Utils) {
+    function($scope, structure, designers, ArchObj, firms, architects, $filter, buildingTypologies, $state, $q, $stateParams, Utils, toaster, ngProgress) {
       /* globals $:false */
       $scope.structure = structure;
       $scope.designers = designers;
+      $scope.dropSupported = true;
+      $scope.iterateExcelObj = {};
+      $scope.records=null;
+      $scope.payload = {};
+      
+     
       /*
       $scope.toDate = function(datestr) {
         if (!datestr) return;
@@ -159,6 +165,410 @@ angular.module('qldarchApp').controller(
         }
       });
 
+    
+      $scope.updateBulkStructures = async function(data, $datafile) {
+		
+		let jsonData = [];
+		$scope.payload = angular.copy(data);
+		let rowsToDisplay = [];
+		$scope.expData = false;
+	
+		let fileName = $datafile[0].name;
+		let file = $datafile[0];
+		let projects = [];
+		
+	
+		if (!file) {
+			toaster.pop('error', 'Please select a file');
+			return;
+		}
+	
+		if (fileName.endsWith(".xlsx") || fileName.endsWith(".xls")) {
+			var reader = new FileReader();
+			reader.onprogress = function(event) {
+				$scope.expData = true;
+				if (event.lengthComputable) {
+					$scope.progress = Math.round((event.loaded / event.total) * 100);
+					$scope.$apply();
+				}
+			};
+	
+			reader.onloadstart = function(event) {
+				$scope.progress = 0;
+				$scope.$apply();
+			};
+	
+			reader.onload = async function(e) {
+				var data = new Uint8Array(e.target.result);
+				var workbook = XLSX.read(data, { type: 'array' });
+				var sheetName = workbook.SheetNames[0];
+				var worksheet = workbook.Sheets[sheetName];
+				jsonData = XLSX.utils.sheet_to_json(worksheet);
+	
+				let confirmMdlJs = document.getElementById('mdl_confirmBox');
+				let ConfirmModal = new bootstrap.Modal(confirmMdlJs);
+				if (jsonData.length > 0) {
+					$scope.iterateExcelObj = {
+						dataObj: jsonData,
+						index: 0,
+						confirmMdl: ConfirmModal
+					};
+				}
+	
+				await Promise.all(jsonData.map(async function(row, index) {
+					let params = {};
+					let rowNumber = index + 2;
+					params.row = rowNumber;
+					params.index = index;
+					let rowsToConfirm = {};
+	
+					//let relationshipIds = [];
+					if (row.BuildingTypology != null)
+						params.typologies = row.BuildingTypology.trim();
+					if (row.BuildingName != null)
+						params.label = row.BuildingName.trim();
+	
+					if (row.associateFirm != null) {
+						let firms = row.associateFirm.split(';');
+						await Promise.all(firms.map(async function(firm) {
+							let res = await ArchObj.loadSimilarity(firm.trim());
+							if (res != null) {
+								let firmsA = res.filter(firm => firm.type === 'firm');
+								let minDistance = Infinity;
+								let mostSimilarRecord = null;
+								
+								if (firmsA.length > 1) {
+									firmsA.forEach(function(record) {
+										let distance = Utils.levenshteinDistance(firm.trim().toLowerCase(), record.label.toLowerCase());
+										if (distance < minDistance) {
+											minDistance = distance;
+											mostSimilarRecord = record;
+										}
+									});
+									rowsToConfirm.rowNumber = rowNumber;
+									rowsToConfirm.index = index;
+									rowsToConfirm.existingFirm = firm.trim();
+									rowsToConfirm.similarFirm = mostSimilarRecord;
+									rowsToConfirm.confirmed = false;
+								} else if (firmsA.length == 1) {
+									//console.log("firmsA[0]")
+									//console.log(firmsA[0])
+									if (firmsA[0].label.trim().toLowerCase() === firm.trim().toLowerCase() )
+										params.associateFirm = firmsA[0]
+									else {
+										
+										rowsToConfirm.rowNumber = rowNumber;
+										rowsToConfirm.index = index;
+										rowsToConfirm.existingFirm = firm.trim();
+										rowsToConfirm.similarFirm = firmsA[0];
+										rowsToConfirm.confirmed = false;
+									}
+
+									//relationshipIds.push(firmsA[0].id);
+								} else {
+									rowsToConfirm.rowNumber = rowNumber;
+									rowsToConfirm.index = index;
+									rowsToConfirm.newFirm = firm;
+									rowsToConfirm.confirmed = false;
+								}
+							} else {
+								rowsToConfirm.rowNumber = rowNumber;
+								rowsToConfirm.index = index;
+								rowsToConfirm.newFirm = firm;
+								rowsToConfirm.confirmed = false;
+							}
+						}));
+					}
+	
+					if (row.associateArchitect != null) {
+						let architects = row.associateArchitect.split(';');
+						await Promise.all(architects.map(async function(architect) {
+							let res = await ArchObj.loadSimilarity(architect.trim());
+							if (res != null) {
+								let architectA = res.filter(obj => obj.type === 'person');
+								let minDistance = Infinity;
+								let mostSimilarRecord = null;
+								if (architectA.length > 1) {
+									architectA.forEach(function(record) {
+										let distance = Utils.levenshteinDistance(architect.trim().toLowerCase(), record.label.toLowerCase());
+										if (distance < minDistance) {
+											minDistance = distance;
+											mostSimilarRecord = record;
+										}
+									});
+									rowsToConfirm.rowNumber = rowNumber;
+									rowsToConfirm.index = index;
+									rowsToConfirm.existingArchitect = architect.trim();
+									rowsToConfirm.similarArchitect = mostSimilarRecord;
+									rowsToConfirm.confirmed = false;
+								} else if (architectA.length == 1) {
+									//relationshipIds.push(architectA[0].id);
+									//console.log("architectA[0]")
+									//console.log(architectA[0])
+									if (architectA[0].label.trim().toLowerCase() === architect.trim().toLowerCase() )
+										params.associateArchitect = architectA[0]
+									else {
+										
+										rowsToConfirm.rowNumber = rowNumber;
+										rowsToConfirm.index = index;
+										rowsToConfirm.existingArchitect =  architect.trim();
+										rowsToConfirm.similarArchitect = architectA[0];
+										rowsToConfirm.confirmed = false;
+									}
+								} else {
+									rowsToConfirm.rowNumber = rowNumber;
+									rowsToConfirm.index = index;
+									rowsToConfirm.newArchitect = architect;
+									rowsToConfirm.confirmed = false;
+								}
+							} else {
+								rowsToConfirm.rowNumber = rowNumber;
+								rowsToConfirm.index = index;
+								rowsToConfirm.newArchitect = architect;
+								rowsToConfirm.confirmed = false;
+							}
+						}));
+					}
+	
+					if (row.StitchedAddress != null)
+						params.location = row.StitchedAddress.trim();
+					if (row.Latitude != null)
+						params.latitude = row.Latitude;
+					if (row.Longitude != null)
+						params.longitude = row.Longitude;
+					if (row.australian != null)
+						params.australian = row.australian;
+					if (row.completion != null) {
+						var completionDate = new Date(row.completion.trim());
+						params.completion = completionDate;
+					}
+					if (row.demolished != null)
+						params.demolished = row.demolished;
+					if (row.summary != null)
+						params.summary = row.summary.trim();
+	
+					projects.push(params);
+					//relationships.push(relationshipIds);
+					
+					//console.log(rowsToConfirm)
+					if(Object.keys(rowsToConfirm) !=0) {
+						rowsToDisplay.push(rowsToConfirm);
+						//console.log(Object.keys(rowsToConfirm))
+
+					}
+					
+				}));
+	
+				$scope.payload.projects = projects;
+				//$scope.payload.relationships = relationships;
+	
+				//console.log($scope.payload);
+				//console.log(rowsToDisplay);
+	
+				if (rowsToDisplay != null ) {
+				  
+				  $scope.records = rowsToDisplay
+				  $scope.iterateExcelObj.confirmMdl.show();
+				}
+				
+	
+				$scope.progress = 100;
+				$scope.$apply();
+			};
+	
+			reader.onerror = function(event) {
+				alert('Error reading file.');
+				$scope.progress = 0;
+				$scope.expData = false;
+				$scope.$apply();
+			};
+	
+			reader.readAsArrayBuffer(file);
+			
+		} else {
+			toaster.pop('error', 'Incorrect file type');
+		}
+	};
+    
+
+      $scope.updateArchitect = function (record) {
+        //console.log("update architect")
+		//let foundRecord = $scope.payload.projects.find(project => project.index === record.index);
+		let recordIndex = $scope.payload.projects.findIndex(project => project.index === record.index)
+		if (record.similarArchitect ) {
+			//console.log("$scope.architect")
+			$scope.payload.projects[recordIndex].associateArchitect = record.similarArchitect
+			//console.log($scope.payload)
+			record.architectConfirmed = true;
+			$scope.updateConfirm(record) 
+			//$scope.checkAllConfirmed(record)
+		}
+		/* console.log(record)
+		console.log($scope.payload) */
+
+      },
+
+      $scope.updateFirm = function (record) {
+		//console.log("update firm")
+        
+		//let foundRecord = $scope.payload.projects.find(project => project.index === record.index);
+		let recordIndex = $scope.payload.projects.findIndex(project => project.index === record.index)
+		
+		if(record.similarFirm) {
+			$scope.payload.projects[recordIndex].associateFirm = record.similarFirm
+			/* console.log(record)
+			console.log("$scope.payload")
+			console.log($scope.payload) */
+			//assign the values to found records
+			record.firmConfirmed = true; 
+			$scope.updateConfirm(record) 
+		} 
+		/* console.log(record)
+		console.log($scope.payload) */
+
+      },
+
+      $scope.addFirm = async function(record) {
+        /* console.log("Add as new firm")
+        console.log(record) */
+		let recordIndex = $scope.payload.projects.findIndex(project => project.index === record.index)
+		if(record.newFirm || record.existingFirm) {
+			let firm = {}
+			firm.type = "firm"
+			if (record.newFirm) 
+				firm.label = record.newFirm.trim()
+			else if (record.existingFirm)
+				firm.label = record.existingFirm.trim()
+
+			let res = await ArchObj.createFirm(firm)
+			//console.log(res)
+			if (res !=null) {
+				let newfirm = {
+					id: res.id,
+					label: res.label,
+					type: res.type
+				};
+				$scope.payload.projects[recordIndex].associateFirm = newfirm
+			}
+			/* console.log(record)
+			console.log("$scope.payload")
+			console.log($scope.payload) */
+			record.firmConfirmed = true;
+			$scope.updateConfirm(record) 
+			
+		}
+        //record.confirmed = true;
+		/* console.log(record)
+		console.log($scope.payload) */
+
+      },
+      $scope.addArchitect = async function(record) {
+        /* console.log("Add as new architect")
+        console.log(record) */
+		let recordIndex = $scope.payload.projects.findIndex(project => project.index === record.index)
+		if (record.newArchitect || record.existingArchitect) {
+			let architect = {}
+			architect.type = "person"
+			
+			if (record.newArchitect) 
+				architect.label = record.newArchitect
+			if (record.existingArchitect)
+				architect.label = record.existingArchitect
+
+			let response = await ArchObj.createArchitect(architect)
+			//console.log(response)
+			if (response!=null) {
+				let newarchitect = {
+					id: response.id,
+					label: response.label,
+					type: response.type
+				};
+				$scope.payload.projects[recordIndex].associateArchitect = newarchitect;
+			}
+			/* console.log(record)
+			console.log("$scope.payload")
+			console.log($scope.payload) */
+			record.architectConfirmed = true;
+			$scope.updateConfirm(record) 
+			
+		}
+        //record.confirmed = true;
+		/* console.log(record)
+		console.log($scope.payload) */
+
+      },
+
+	  $scope.updateConfirm = function (record) {
+		console.log($scope.records)
+		let recordIndex = $scope.records.findIndex(srecord => srecord.index === record.index)
+		//console.log(recordIndex)
+		if ((record.similarFirm || record.newFirm) && (record.similarArchitect ||record.newArchitect)) {
+			if( record.firmConfirmed && record.architectConfirmed ){
+				//console.log("first condi")
+				$scope.records[recordIndex].confirmed = true;
+			}
+			
+		} else if ((!record.similarArchitect || !record.newArchitect) && (record.similarFirm || record.newFirm )) {
+			if (record.firmConfirmed ) {
+				//console.log("secod condi")
+				$scope.records[recordIndex].confirmed = true;
+		 }
+			
+		} else if ((!record.similarFirm || !record.newFirm ) && (record.similarArchitect || record.newArchitect) ) {
+			if (record.architectConfirmed) {
+				//console.log("third condi")
+				$scope.records[recordIndex].confirmed = true;
+			}
+		}
+
+		$scope.checkAllConfirmed();
+
+
+
+	  },
+
+    $scope.checkAllConfirmed = async function() {
+		console.log("within chek all")
+		let promises = [];
+		let promise
+		var allConfirmed = $scope.records.every(function(record) {
+			console.log(record)
+          	return record.confirmed;
+        }); 
+        console.log( $scope.records)
+        console.log(allConfirmed)
+        //console.log("allConfirmed")
+        if (allConfirmed) {
+			$scope.iterateExcelObj.confirmMdl.hide();
+			//send the project to backend for bulk update
+			ngProgress.reset();
+			ngProgress.color('#ea1d5d');
+			ngProgress.start();
+			promise =  ArchObj.createBulkStructures($scope.payload).then(function(res) {
+			console.log("res")
+			console.log(res)
+			return res;
+
+			}).catch(function(error) {
+			/* console.log("error in promise")   
+			console.log(error)  */  
+			$state.go('structure.summary.bulk');
+			return error;
+			});
+			promises.push(promise);
+			console.log("in staructureCtl") 
+
+			$q.all(promises).then (function () {
+				ngProgress.complete();
+				ngProgress.reset();
+				console.log("in else structure ctl")
+				$state.go('structures.australian');
+			})
+		  //$scope.iterateExcelObj.confirmMdl.addEventListener('hidden.bs.modal')
+        }
+      },
+
+
       $scope.updateStructure = function(data) {
         var promises = [];
         var promise;
@@ -169,6 +579,7 @@ angular.module('qldarchApp').controller(
           // completionpd is a precision delta in days, eg:
           // 0 means that the date is accurate to the date/day
           // 30 means that the date is accurate to the month
+          console.log(parts)
           if (parts.length === 3) {
             data.completionpd = 0;
           } else if (parts.length === 2) {
@@ -180,6 +591,7 @@ angular.module('qldarchApp').controller(
           data.completion = parts.reverse().join('-');
         })($scope._completion);
         if (data.id) {
+          console.log("inside update")
           promise = ArchObj.updateStructure(data).then(function(res) {
             return res;
           }).catch(function(error) {
@@ -191,6 +603,8 @@ angular.module('qldarchApp').controller(
           });
           promises.push(promise);
         } else {
+          console.log("inside create")
+          console.log(data)
           promise = ArchObj.createStructure(data).then(function(res) {
             return res;
           }).catch(function(error) {

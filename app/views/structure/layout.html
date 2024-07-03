@@ -11,6 +11,9 @@
         <div class="col-sm-6" ng-show="$state.includes('structure.articles')" style="text-align: right;">
           <small><a ui-sref="articles">» Articles</a></small>
         </div>
+       <!--  <div class="col-sm-6" ng-show="$state.includes('structure.bulk')" style="text-align: right;">
+          <small><a ui-sref="articles">» New Projects</a></small>
+        </div> -->
       </div>
       <h1>
         <img ng-if="structure.media.length>1"
@@ -18,8 +21,8 @@
           style="height: 40px; width: 40px; position: relative; top: -4px; margin-right: 1px; border: 3px solid white;" class="" /> <img
           ng-if="structure.media.length==1&&structure.media[0].id" ng-src="{{Uris.WS_MEDIA+structure.media[0].id+'?dimension=40x40'}}" alt=""
           style="height: 40px; width: 40px; position: relative; top: -4px; margin-right: 1px; border: 3px solid white;" class="" /> {{
-        structure.label || 'New Project' }}
-      </h1>
+        structure.label || ( $state.includes('structure.summary.bulk') ?'New Projects' :'New Project') }}
+      </h1> 
     </div>
   </div>
   <div class="subnav" style="margin-bottom: 0;">
