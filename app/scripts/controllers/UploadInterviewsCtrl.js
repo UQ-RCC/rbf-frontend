@@ -76,7 +76,8 @@ angular.module('qldarchApp').controller('UploadInterviewsCtrl',
       }
 
       function uploadTranscript(data, file) {
-        
+        console.log("within upload transcript")
+        console.log(file)
         $scope.expTranscript = {};
         $scope.expTranscript.$uploadFile = file;
         $scope.myModelObj = {
@@ -97,6 +98,8 @@ angular.module('qldarchApp').controller('UploadInterviewsCtrl',
           return err;
         });
       }
+
+
 
       function goToInterview(id) {
         console.log("redirect to invterview")
@@ -131,6 +134,7 @@ angular.module('qldarchApp').controller('UploadInterviewsCtrl',
                 uploadMedia(data, $mediafile).then(function() {
                   if ($transcriptfile) {
                     console.log("transcript presented")
+                    console.log($transcriptfile)
                     uploadTranscript(data, $transcriptfile).then(function() {
                       goToInterview(data.id);
                     });

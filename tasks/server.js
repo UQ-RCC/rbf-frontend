@@ -38,14 +38,14 @@ module.exports = function(grunt) {
 
   grunt.config('connect', {
     options : {
-      port : 9000,
+      port : 8080,
       // Change this to '0.0.0.0' to access the server from outside.
       // hostname: 'localhost',
       hostname : '0.0.0.0',
       livereload : 35729,
       middleware : function(connect, options, middlewares) {
         // inject a custom middleware into the array of default middlewares
-        middlewares.unshift(prx('/ws', 'http://localhost:8080/qldarch'), modRewrite(['^[^\\.]*$ /index.html [L]']));
+        middlewares.unshift(prx('/ws', 'http://localhost:9000/qldarch'), modRewrite(['^[^\\.]*$ /index.html [L]']));
         return middlewares;
       }
     },
