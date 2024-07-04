@@ -1,15 +1,13 @@
 'use strict';
 
-angular.module('qldarchApp').controller(
-    'StructureCtrl',
-    function($scope, structure, designers, ArchObj, firms, architects, $filter, buildingTypologies, $state, $q, $stateParams, Utils, toaster, ngProgress) {
+angular.module('qldarchApp').controller('StructureCtrl', function($scope, structure, designers, ArchObj, firms, architects, $filter, buildingTypologies, $state, $q, $stateParams, Utils, toaster, ngProgress) {
       /* globals $:false */
-      $scope.structure = structure;
-      $scope.designers = designers;
-      $scope.dropSupported = true;
-      $scope.iterateExcelObj = {};
-      $scope.records=null;
-      $scope.payload = {};
+	$scope.structure = structure;
+	$scope.designers = designers;
+	$scope.dropSupported = true;
+	$scope.iterateExcelObj = {};
+	$scope.records=null;
+	$scope.payload = {};
       
      
       /*
@@ -21,168 +19,165 @@ angular.module('qldarchApp').controller(
         return new Date(parts.reverse().join('-'));
       };
       */
-      (function(){
-        if ($scope.structure && $scope.structure.completion) {
-          var completionpd = $scope.structure.completionpd;
-          var parts = $scope.structure.completion.split('-');
-          if (completionpd >= 365) {
-            parts.splice(1);
-          } else if (completionpd >= 28) {
-            parts.splice(2);
-          }
-          $scope._completion = parts.reverse().join('-');
-        }
-      })();
+	(function(){
+	if ($scope.structure && $scope.structure.completion) {
+		var completionpd = $scope.structure.completionpd;
+		var parts = $scope.structure.completion.split('-');
+		if (completionpd >= 365) {
+		parts.splice(1);
+		} else if (completionpd >= 28) {
+		parts.splice(2);
+		}
+		$scope._completion = parts.reverse().join('-');
+	}
+	})();
 
-      $scope.structure.type = 'structure';
+	$scope.structure.type = 'structure';
+	$scope.structure.associatedEntities = [];
 
-      $scope.structure.associatedEntities = [];
+	$scope.structure.$associatedFirm = null;
+	if (angular.isDefined(designers.firms)) {
+	$scope.structure.$associatedFirm = [];
+	angular.forEach(designers.firms, function(firm) {
+		var firmobj = {
+		id : firm.subject,
+		text : firm.subjectlabel
+		};
+		$scope.structure.$associatedFirm.push(firmobj);
+		firmobj.relationshipid = firm.relationshipid;
+		$scope.structure.associatedEntities.push(firmobj);
+	});
+	}
+	if (angular.isDefined($stateParams.firmId)) {
+	$scope.structure.$associatedFirm = [];
+	var firm = $.grep(firms, function(f) {
+		return JSON.stringify(f.id) === $stateParams.firmId;
+	});
+	var firmobj = {
+		id : firm[0].id,
+		text : firm[0].label
+	};
+	$scope.structure.$associatedFirm.push(firmobj);
+	}
 
-      $scope.structure.$associatedFirm = null;
-      if (angular.isDefined(designers.firms)) {
-        $scope.structure.$associatedFirm = [];
-        angular.forEach(designers.firms, function(firm) {
-          var firmobj = {
-            id : firm.subject,
-            text : firm.subjectlabel
-          };
-          $scope.structure.$associatedFirm.push(firmobj);
-          firmobj.relationshipid = firm.relationshipid;
-          $scope.structure.associatedEntities.push(firmobj);
-        });
-      }
-      if (angular.isDefined($stateParams.firmId)) {
-        $scope.structure.$associatedFirm = [];
-        var firm = $.grep(firms, function(f) {
-          return JSON.stringify(f.id) === $stateParams.firmId;
-        });
-        var firmobj = {
-          id : firm[0].id,
-          text : firm[0].label
-        };
-        $scope.structure.$associatedFirm.push(firmobj);
-      }
+	$scope.firmSelect = {
+	placeholder : 'Select a Firm',
+	dropdownAutoWidth : true,
+	multiple : true,
+	allowClear : true,
+	data : Utils.makeSelectOptions(firms)
+	};
 
-      $scope.firmSelect = {
-        placeholder : 'Select a Firm',
-        dropdownAutoWidth : true,
-        multiple : true,
-        allowClear : true,
-        data : Utils.makeSelectOptions(firms)
-      };
+	$scope.structure.$associatedArchitects = null;
+	if (angular.isDefined(designers.architects)) {
+		$scope.structure.$associatedArchitects = [];
+		angular.forEach(designers.architects, function(architect) {
+			var architectobj = {
+			id : architect.subject,
+			text : architect.subjectlabel
+			};
+			$scope.structure.$associatedArchitects.push(architectobj);
+			architectobj.relationshipid = architect.relationshipid;
+			$scope.structure.associatedEntities.push(architectobj);
+		});
+	}
+	if (angular.isDefined($stateParams.architectId)) {
+		$scope.structure.$associatedArchitects = [];
+		var architect = $.grep(architects, function(a) {
+			return JSON.stringify(a.id) === $stateParams.architectId;
+		});
+		var architectobj = {
+			id : architect[0].id,
+			text : architect[0].label
+		};
+		$scope.structure.$associatedArchitects.push(architectobj);
+	}
 
-      $scope.structure.$associatedArchitects = null;
-      if (angular.isDefined(designers.architects)) {
-        $scope.structure.$associatedArchitects = [];
-        angular.forEach(designers.architects, function(architect) {
-          var architectobj = {
-            id : architect.subject,
-            text : architect.subjectlabel
-          };
-          $scope.structure.$associatedArchitects.push(architectobj);
-          architectobj.relationshipid = architect.relationshipid;
-          $scope.structure.associatedEntities.push(architectobj);
-        });
-      }
-      if (angular.isDefined($stateParams.architectId)) {
-        $scope.structure.$associatedArchitects = [];
-        var architect = $.grep(architects, function(a) {
-          return JSON.stringify(a.id) === $stateParams.architectId;
-        });
-        var architectobj = {
-          id : architect[0].id,
-          text : architect[0].label
-        };
-        $scope.structure.$associatedArchitects.push(architectobj);
-      }
+	$scope.architectSelect = {
+		placeholder : 'Select an Architect',
+		dropdownAutoWidth : true,
+		multiple : true,
+		data : Utils.makeSelectOptions(architects)
+	};
 
-      $scope.architectSelect = {
-        placeholder : 'Select an Architect',
-        dropdownAutoWidth : true,
-        multiple : true,
-        data : Utils.makeSelectOptions(architects)
-      };
+	$scope.structure.$typologies = null;
+	if (angular.isDefined(structure.typologies)) {
+		$scope.structure.$typologies = [];
+		angular.forEach(structure.typologies, function(typo) {
+			for ( var typology in buildingTypologies) {
+			if (typo === buildingTypologies[typology]) {
+				$scope.structure.$typologies.push({
+				id : typology,
+				text : buildingTypologies[typology]
+				});
+			}
+			}
+		});
+	}
 
-      $scope.structure.$typologies = null;
-      if (angular.isDefined(structure.typologies)) {
-        $scope.structure.$typologies = [];
-        angular.forEach(structure.typologies, function(typo) {
-          for ( var typology in buildingTypologies) {
-            if (typo === buildingTypologies[typology]) {
-              $scope.structure.$typologies.push({
-                id : typology,
-                text : buildingTypologies[typology]
-              });
-            }
-          }
-        });
-      }
+	$scope.typologySelect = {
+		placeholder : 'Select a Building Typology',
+		dropdownAutoWidth : true,
+		multiple : true,
+		query : function(options) {
+			var data = {
+			results : []
+			};
+			for ( var typology in buildingTypologies) {
+			data.results.push({
+				id : typology,
+				text : buildingTypologies[typology]
+			});
+			}
+			options.callback(data);
+		}
+	};
 
-      $scope.typologySelect = {
-        placeholder : 'Select a Building Typology',
-        dropdownAutoWidth : true,
-        multiple : true,
-        query : function(options) {
-          var data = {
-            results : []
-          };
-          for ( var typology in buildingTypologies) {
-            data.results.push({
-              id : typology,
-              text : buildingTypologies[typology]
-            });
-          }
-          options.callback(data);
-        }
-      };
-
-      $scope.$watch('structure.location', function(location) {
-        if (angular.isDefined(location)) {
-          clearTimeout($scope.typingTimer);
-          $scope.typingTimer = setTimeout(function() {
-           // $.getJSON('https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyByxzrKtppGuOxwzav-P52wTcfXcG1IJz0&address=' + $scope.structure.location,
-	      $.getJSON('https://nominatim.openstreetmap.org/search?q=' + $scope.structure.location+'&format=json',
-                function(data) {
-              /*    if (data.results.length === 1) {
-                    if ((structure.latitude !== data.results[0].geometry.location.lat) ||
-                        (structure.longitude !== data.results[0].geometry.location.lng)) {
-                      structure.latitude = data.results[0].geometry.location.lat;
-                      structure.longitude = data.results[0].geometry.location.lng;
-                      $('#LAT').val(data.results[0].geometry.location.lat);
-                      $('#LNG').val(data.results[0].geometry.location.lng);
-                    }
-                  }*/
-		   if (data.length > 0) {
-			 if ((structure.latitude !== data[0].lat) || (structure.longitude !== data[0].lon)) {
-				structure.latitude = data[0].lat;
-				structure.longitude = data[0].lon;
-				$('#LAT').val(data[0].lat);
-				$('#LNG').val(data[0].lon);
-			 }
-		  }
-                });
-          }, 2000);
-        }
-      });
+	$scope.$watch('structure.location', function(location) {
+	if (angular.isDefined(location)) {
+		clearTimeout($scope.typingTimer);
+		$scope.typingTimer = setTimeout(function() {
+		// $.getJSON('https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyByxzrKtppGuOxwzav-P52wTcfXcG1IJz0&address=' + $scope.structure.location,
+		$.getJSON('https://nominatim.openstreetmap.org/search?q=' + $scope.structure.location+'&format=json',
+			function(data) {
+			/*    if (data.results.length === 1) {
+				if ((structure.latitude !== data.results[0].geometry.location.lat) ||
+					(structure.longitude !== data.results[0].geometry.location.lng)) {
+					structure.latitude = data.results[0].geometry.location.lat;
+					structure.longitude = data.results[0].geometry.location.lng;
+					$('#LAT').val(data.results[0].geometry.location.lat);
+					$('#LNG').val(data.results[0].geometry.location.lng);
+				}
+				}*/
+		if (data.length > 0) {
+			if ((structure.latitude !== data[0].lat) || (structure.longitude !== data[0].lon)) {
+			structure.latitude = data[0].lat;
+			structure.longitude = data[0].lon;
+			$('#LAT').val(data[0].lat);
+			$('#LNG').val(data[0].lon);
+			}
+		}
+			});
+		}, 2000);
+	}
+	});
 
     
-      $scope.updateBulkStructures = async function(data, $datafile) {
-		
+	$scope.updateBulkStructures = async function(data, $datafile) {
 		let jsonData = [];
 		$scope.payload = angular.copy(data);
 		let rowsToDisplay = [];
 		$scope.expData = false;
-	
+
 		let fileName = $datafile[0].name;
 		let file = $datafile[0];
 		let projects = [];
-		
 	
 		if (!file) {
 			toaster.pop('error', 'Please select a file');
 			return;
 		}
-	
+
 		if (fileName.endsWith(".xlsx") || fileName.endsWith(".xls")) {
 			var reader = new FileReader();
 			reader.onprogress = function(event) {
@@ -192,19 +187,19 @@ angular.module('qldarchApp').controller(
 					$scope.$apply();
 				}
 			};
-	
+
 			reader.onloadstart = function(event) {
 				$scope.progress = 0;
 				$scope.$apply();
 			};
-	
+
 			reader.onload = async function(e) {
 				var data = new Uint8Array(e.target.result);
 				var workbook = XLSX.read(data, { type: 'array' });
 				var sheetName = workbook.SheetNames[0];
 				var worksheet = workbook.Sheets[sheetName];
 				jsonData = XLSX.utils.sheet_to_json(worksheet);
-	
+
 				let confirmMdlJs = document.getElementById('mdl_confirmBox');
 				let ConfirmModal = new bootstrap.Modal(confirmMdlJs);
 				if (jsonData.length > 0) {
@@ -214,20 +209,20 @@ angular.module('qldarchApp').controller(
 						confirmMdl: ConfirmModal
 					};
 				}
-	
+
 				await Promise.all(jsonData.map(async function(row, index) {
 					let params = {};
 					let rowNumber = index + 2;
 					params.row = rowNumber;
 					params.index = index;
 					let rowsToConfirm = {};
-	
+
 					//let relationshipIds = [];
 					if (row.BuildingTypology != null)
 						params.typologies = row.BuildingTypology.trim();
 					if (row.BuildingName != null)
 						params.label = row.BuildingName.trim();
-	
+
 					if (row.associateFirm != null) {
 						let firms = row.associateFirm.split(';');
 						await Promise.all(firms.map(async function(firm) {
@@ -279,7 +274,7 @@ angular.module('qldarchApp').controller(
 							}
 						}));
 					}
-	
+
 					if (row.associateArchitect != null) {
 						let architects = row.associateArchitect.split(';');
 						await Promise.all(architects.map(async function(architect) {
@@ -329,7 +324,7 @@ angular.module('qldarchApp').controller(
 							}
 						}));
 					}
-	
+
 					if (row.StitchedAddress != null)
 						params.location = row.StitchedAddress.trim();
 					if (row.Latitude != null)
@@ -346,7 +341,7 @@ angular.module('qldarchApp').controller(
 						params.demolished = row.demolished;
 					if (row.summary != null)
 						params.summary = row.summary.trim();
-	
+
 					projects.push(params);
 					//relationships.push(relationshipIds);
 					
@@ -358,31 +353,26 @@ angular.module('qldarchApp').controller(
 					}
 					
 				}));
-	
+
 				$scope.payload.projects = projects;
-				//$scope.payload.relationships = relationships;
-	
-				//console.log($scope.payload);
-				//console.log(rowsToDisplay);
-	
+				
 				if (rowsToDisplay != null ) {
-				  
-				  $scope.records = rowsToDisplay
-				  $scope.iterateExcelObj.confirmMdl.show();
+					
+					$scope.records = rowsToDisplay
+					$scope.iterateExcelObj.confirmMdl.show();
 				}
 				
-	
 				$scope.progress = 100;
 				$scope.$apply();
 			};
-	
+
 			reader.onerror = function(event) {
 				alert('Error reading file.');
 				$scope.progress = 0;
 				$scope.expData = false;
 				$scope.$apply();
 			};
-	
+
 			reader.readAsArrayBuffer(file);
 			
 		} else {
@@ -391,9 +381,9 @@ angular.module('qldarchApp').controller(
 	};
     
 
-      $scope.updateArchitect = function (record) {
-        //console.log("update architect")
-		//let foundRecord = $scope.payload.projects.find(project => project.index === record.index);
+	$scope.updateArchitect = function (record) {
+	//console.log("update architect")
+	//let foundRecord = $scope.payload.projects.find(project => project.index === record.index);
 		let recordIndex = $scope.payload.projects.findIndex(project => project.index === record.index)
 		if (record.similarArchitect ) {
 			//console.log("$scope.architect")
@@ -406,12 +396,9 @@ angular.module('qldarchApp').controller(
 		/* console.log(record)
 		console.log($scope.payload) */
 
-      },
+	};
 
-      $scope.updateFirm = function (record) {
-		//console.log("update firm")
-        
-		//let foundRecord = $scope.payload.projects.find(project => project.index === record.index);
+	$scope.updateFirm = function (record) {
 		let recordIndex = $scope.payload.projects.findIndex(project => project.index === record.index)
 		
 		if(record.similarFirm) {
@@ -423,14 +410,9 @@ angular.module('qldarchApp').controller(
 			record.firmConfirmed = true; 
 			$scope.updateConfirm(record) 
 		} 
-		/* console.log(record)
-		console.log($scope.payload) */
+	};
 
-      },
-
-      $scope.addFirm = async function(record) {
-        /* console.log("Add as new firm")
-        console.log(record) */
+	$scope.addFirm = async function(record) {
 		let recordIndex = $scope.payload.projects.findIndex(project => project.index === record.index)
 		if(record.newFirm || record.existingFirm) {
 			let firm = {}
@@ -450,21 +432,13 @@ angular.module('qldarchApp').controller(
 				};
 				$scope.payload.projects[recordIndex].associateFirm = newfirm
 			}
-			/* console.log(record)
-			console.log("$scope.payload")
-			console.log($scope.payload) */
 			record.firmConfirmed = true;
 			$scope.updateConfirm(record) 
 			
 		}
-        //record.confirmed = true;
-		/* console.log(record)
-		console.log($scope.payload) */
+	};
 
-      },
-      $scope.addArchitect = async function(record) {
-        /* console.log("Add as new architect")
-        console.log(record) */
+	$scope.addArchitect = async function(record) {
 		let recordIndex = $scope.payload.projects.findIndex(project => project.index === record.index)
 		if (record.newArchitect || record.existingArchitect) {
 			let architect = {}
@@ -485,20 +459,13 @@ angular.module('qldarchApp').controller(
 				};
 				$scope.payload.projects[recordIndex].associateArchitect = newarchitect;
 			}
-			/* console.log(record)
-			console.log("$scope.payload")
-			console.log($scope.payload) */
 			record.architectConfirmed = true;
 			$scope.updateConfirm(record) 
 			
 		}
-        //record.confirmed = true;
-		/* console.log(record)
-		console.log($scope.payload) */
+	};
 
-      },
-
-	  $scope.updateConfirm = function (record) {
+	$scope.updateConfirm = function (record) {
 		console.log($scope.records)
 		let recordIndex = $scope.records.findIndex(srecord => srecord.index === record.index)
 		//console.log(recordIndex)
@@ -512,7 +479,7 @@ angular.module('qldarchApp').controller(
 			if (record.firmConfirmed ) {
 				//console.log("secod condi")
 				$scope.records[recordIndex].confirmed = true;
-		 }
+			}
 			
 		} else if ((!record.similarFirm || !record.newFirm ) && (record.similarArchitect || record.newArchitect) ) {
 			if (record.architectConfirmed) {
@@ -522,10 +489,7 @@ angular.module('qldarchApp').controller(
 		}
 
 		$scope.checkAllConfirmed();
-
-
-
-	  },
+	};
 
     $scope.checkAllConfirmed = async function() {
 		console.log("within chek all")
@@ -566,101 +530,101 @@ angular.module('qldarchApp').controller(
 			})
 		  //$scope.iterateExcelObj.confirmMdl.addEventListener('hidden.bs.modal')
         }
-      },
+    };
 
 
-      $scope.updateStructure = function(data) {
-        var promises = [];
-        var promise;
-        (function(d){
-          if (!d) return;
-          //var yyyymmdd = d.replace(/\D*/g,'');
-          var parts = d.split('-');
-          // completionpd is a precision delta in days, eg:
-          // 0 means that the date is accurate to the date/day
-          // 30 means that the date is accurate to the month
-          console.log(parts)
-          if (parts.length === 3) {
-            data.completionpd = 0;
-          } else if (parts.length === 2) {
-            data.completionpd = (new Date(+parts[1], parts[0] - 1, 0)).getDate();
-          } else if (parts.length === 1) {
-            var y = +parts[2];
-            data.completionpd = !(y%(y%25?4:16)) ? 366 : 365;
-          }
-          data.completion = parts.reverse().join('-');
-        })($scope._completion);
-        if (data.id) {
-          console.log("inside update")
-          promise = ArchObj.updateStructure(data).then(function(res) {
-            return res;
-          }).catch(function(error) {
-            //console.log('Failed to save', error);
-            $state.go('structure.summary.edit', {
-              structureId : data.id
-            });
-            return error;
-          });
-          promises.push(promise);
-        } else {
-          console.log("inside create")
-          console.log(data)
-          promise = ArchObj.createStructure(data).then(function(res) {
-            return res;
-          }).catch(function(error) {
-            //console.log('Failed to save', error);
-            $state.go('structure.summary.edit', {
-              structureId : data.id
-            });
-            return error;
-          });
-          promises.push(promise);
-        }
-        $q.all(promises).then(function() {
-          if (angular.isDefined($stateParams.firmId)) {
-            $state.go('firm.structures', {
-              firmId : $stateParams.firmId
-            }, {
-              reload : true,
-              inherit : false
-            });
-          } else if (angular.isDefined($stateParams.architectId)) {
-            $state.go('architect.structures', {
-              architectId : $stateParams.architectId
-            }, {
-              reload : true,
-              inherit : false
-            });
-          } else if (structure.id) {
-            $state.go('structure.summary', {
-              structureId : data.id
-            }, {
-              reload : true,
-              inherit : false
-            });
-          } else {
-            $state.go('structures.australian');
-          }
-        });
-      };
+	$scope.updateStructure = function(data) {
+		var promises = [];
+		var promise;
+		(function(d){
+			if (!d) return;
+			//var yyyymmdd = d.replace(/\D*/g,'');
+			var parts = d.split('-');
+			// completionpd is a precision delta in days, eg:
+			// 0 means that the date is accurate to the date/day
+			// 30 means that the date is accurate to the month
+			console.log(parts)
+			if (parts.length === 3) {
+			data.completionpd = 0;
+			} else if (parts.length === 2) {
+			data.completionpd = (new Date(+parts[1], parts[0] - 1, 0)).getDate();
+			} else if (parts.length === 1) {
+			var y = +parts[2];
+			data.completionpd = !(y%(y%25?4:16)) ? 366 : 365;
+			}
+			data.completion = parts.reverse().join('-');
+		})($scope._completion);
+		if (data.id) {
+			console.log("inside update")
+			promise = ArchObj.updateStructure(data).then(function(res) {
+			return res;
+			}).catch(function(error) {
+			//console.log('Failed to save', error);
+			$state.go('structure.summary.edit', {
+				structureId : data.id
+			});
+			return error;
+			});
+			promises.push(promise);
+		} else {
+			console.log("inside create")
+			console.log(data)
+			promise = ArchObj.createStructure(data).then(function(res) {
+			return res;
+			}).catch(function(error) {
+			//console.log('Failed to save', error);
+			$state.go('structure.summary.edit', {
+				structureId : data.id
+			});
+			return error;
+			});
+			promises.push(promise);
+		}
+		$q.all(promises).then(function() {
+			if (angular.isDefined($stateParams.firmId)) {
+			$state.go('firm.structures', {
+				firmId : $stateParams.firmId
+			}, {
+				reload : true,
+				inherit : false
+			});
+			} else if (angular.isDefined($stateParams.architectId)) {
+			$state.go('architect.structures', {
+				architectId : $stateParams.architectId
+			}, {
+				reload : true,
+				inherit : false
+			});
+			} else if (structure.id) {
+			$state.go('structure.summary', {
+				structureId : data.id
+			}, {
+				reload : true,
+				inherit : false
+			});
+			} else {
+			$state.go('structures.australian');
+			}
+		});
+	};
 
-      $scope.clearCompletionDate = function() {
-        structure.completion = '';
-      };
+	$scope.clearCompletionDate = function() {
+		structure.completion = '';
+	};
 
-      $scope.cancel = function() {
-        if (structure.id) {
-          $state.go('structure.summary');
-        } else if (angular.isDefined($stateParams.firmId)) {
-          $state.go('firm.structures', {
-            firmId : $stateParams.firmId
-          });
-        } else if (angular.isDefined($stateParams.architectId)) {
-          $state.go('architect.structures', {
-            architectId : $stateParams.architectId
-          });
-        } else {
-          $state.go('structures.australian');
-        }
-      };
-    });
+	$scope.cancel = function() {
+		if (structure.id) {
+			$state.go('structure.summary');
+		} else if (angular.isDefined($stateParams.firmId)) {
+			$state.go('firm.structures', {
+			firmId : $stateParams.firmId
+			});
+		} else if (angular.isDefined($stateParams.architectId)) {
+			$state.go('architect.structures', {
+			architectId : $stateParams.architectId
+			});
+		} else {
+			$state.go('structures.australian');
+		}
+	};
+});

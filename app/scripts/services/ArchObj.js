@@ -3,19 +3,17 @@
 angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $q, Uris, RelationshipLabels, toaster, CreateRelationship, YYYYMMDDdate, $upload) {
   /* globals $:false */
   var path = Uris.WS_ROOT + 'archobj/';
-  //var bulkpath = Uris.WS_ROOT + 'archobjbulk/';
-  //var bulkpath = Uris.WS_ROOT + 'media/';
 
   function getStartTime(exchange) {
     if (!exchange.time) {
       return 0;
     }
     return exchange.time;
-  }
+  };
 
   function isLastExchange(exchange, exchanges) {
     return exchanges.indexOf(exchange) === exchanges.length - 1;
-  }
+  };
 
   function nextExchange(exchange, exchanges) {
     var nextIndex = exchanges.indexOf(exchange) + 1;
@@ -23,7 +21,7 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
       throw new Error('Can\'t find next exchange');
     }
     return exchanges[nextIndex];
-  }
+  };
 
   function getEndTime(exchange, exchanges) {
     if (isLastExchange(exchange, exchanges)) {
@@ -31,7 +29,7 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
       return exchange.endTime;
     }
     return nextExchange(exchange, exchanges).time;
-  }
+  };
 
   // Public API here
   var archobj = {
@@ -129,8 +127,6 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
     createFirm : function(data) {
 
       var payload = angular.copy(data);
-      console.log("create firm payload")
-      console.log(payload)
       if (payload.$employedArchitects !== null && angular.isDefined(payload.$employedArchitects)) {
         payload.employees = [];
         angular.forEach(payload.$employedArchitects, function(architect) {
@@ -201,7 +197,7 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
         return result.data;
       }, function(response) {
         //toaster.pop('error', 'Error occured', response.data.msg);
-        //console.log('error message: ' + response.data.msg);
+        console.log('error message: ' + response.data.msg);
       });
     },
 
@@ -288,7 +284,7 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
         delete payload.completion;
       }
 
-      console.log("before delete in create")
+      
       console.log(payload)
       console.log(payload.relationships)
       // Remove any extra information
@@ -318,8 +314,7 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
       // delete payload.australian;
       // delete payload.demolished;
 
-      console.log("after delete in create")
-      console.log(payload)
+      
       return $http({
         method : 'PUT',
         url : path,
@@ -418,7 +413,7 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
       // delete payload.longitude;
       // delete payload.demolished;
       // delete payload.typologies;
-      console.log("payload before request")
+      
       console.log(payload)
       return $http({
         method : 'POST',
@@ -501,14 +496,14 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
 
     createBulkStructures : function (data) {
       var payload = angular.copy(data);
-      var projects = payload.projects
-      console.log("projects before")
-      console.log(projects)
-      let projectList = []
+      var projects = payload.projects;
+      
+      console.log(projects);
+      var projectList = [];
       angular.forEach(projects, function (project) {
-        console.log(JSON.stringify(project))
-        projectList.push(JSON.stringify(project))
-      })
+        console.log(JSON.stringify(project));
+        projectList.push(JSON.stringify(project));
+      });
       payload.projects = projectList;
       
       /* if (payload.$typologies !== null && angular.isDefined(payload.$typologies)) {
@@ -530,7 +525,7 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
       }
       
 
-      console.log("payload before bulk request")
+      
       console.log(payload)
       
       console.log(relationships)
@@ -593,7 +588,7 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
           } */
 
         });
-        console.log("data list");
+        
         console.log(dataList);
         console.log(dataList.length);
         /* if(dataList) {
@@ -704,7 +699,7 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
     createInterview : function(data) {
       var payload = angular.copy(data);
       payload.interviewdate = YYYYMMDDdate.formatDate(payload.interviewdate);
-      console.log("payload.created in create")
+      
       console.log(payload.interviewdate )
       if (payload.interviewdate === null) {
         delete payload.interviewdate;
@@ -741,7 +736,7 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
       // delete payload.interviewer;
       // delete payload.location;
       // delete payload.created;
-      console.log("within create - payload")
+      
       console.log(payload)
       return $http({
         method : 'PUT',
@@ -756,7 +751,7 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
         data : payload
       }).then(function(response) {
         angular.extend(data, response.data);
-        console.log("success payload-create")
+       
         console.log(response.data)
         console.log(data)
         toaster.pop('success', data.label + ' created');
@@ -770,7 +765,7 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
 
     updateInterview : function(data) {
       var payload = angular.copy(data);
-      console.log("updateInterview payload")
+      
       console.log(payload)
 
       payload.interviewdate = YYYYMMDDdate.formatDate(new Date(payload.interviewdate));
@@ -809,7 +804,7 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
       // delete payload.location;
       // delete payload.created;
 
-      console.log("payload after delete")
+      
       console.log(payload)
       console.log(payload.transcript)
 

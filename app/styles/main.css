@@ -2136,6 +2136,11 @@ fieldset[disabled] .btn-default:hover {
   background-color: #11c3b6;
   border-color: #0faca0;
 }
+.btn-secondary {
+  color: #fff;
+  background-color: #2153b7;
+  border-color: #2153b7;
+}
 .btn-primary.active,
 .btn-primary:active,
 .btn-primary:focus,
@@ -5048,6 +5053,10 @@ button.close {
   background: 0 0;
   border: 0;
   -webkit-appearance: none;
+}
+.button-clicked {
+  background-color: #5e5e5e;
+  border-color: #5e5e5e;
 }
 .modal-content,
 .popover {

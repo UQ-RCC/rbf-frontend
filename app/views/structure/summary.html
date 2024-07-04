@@ -237,12 +237,13 @@
                     <td > {{record.newFirm}}</td>
                     <td > {{record.newArchitect}}</td>
                     <td>
-                      <button  ng-if="record.similarFirm !=null" type="button" class="btn btn-primary btn-sm" ng-click="updateFirm(record) ">Update to similar firm</button>
-                      <button  ng-if="record.similarArchitect !=null" type="button" class="btn btn-primary btn-sm" ng-click="updateArchitect(record)">Update to similar architect</button>
+                      <button  ng-if="record.newFirm !=null || record.similarFirm !=null" type="button" class="btn btn-primary btn-sm" ng-class="{'button-clicked':record.firmConfirmed}" ng-click="addFirm(record)">Add as new firm</button>
+                      <button  ng-if="record.similarFirm !=null" type="button" class="btn btn-primary btn-sm" ng-class="{'button-clicked':record.firmConfirmed}" ng-click="updateFirm(record) ">Update to similar firm</button>
+                      
+                      <button  ng-if="record.newArchitect !=null || record.similarArchitect !=null" type="button" class="btn btn-secondary btn-sm" ng-class="{'button-clicked':record.architectConfirmed}" ng-click="addArchitect(record)">Add as new architect</button>
+                      <button  ng-if="record.similarArchitect !=null" type="button" class="btn btn-secondary btn-sm" ng-class="{'button-clicked':record.architectConfirmed}" ng-click="updateArchitect(record)">Update to similar architect</button>
                       
                      <!--  <button  ng-if="record.similarArchitect !=null || record.similarFirm !=null" type="button" class="btn btn-primary btn-sm" ng-click="updateToSimilar(record); checkAllConfirmed()">Update to similar record</button> -->
-                      <button  ng-if="record.newFirm !=null || record.similarFirm !=null" type="button" class="btn btn-primary btn-sm" ng-click="addFirm(record)">Add as new firm</button>
-                      <button  ng-if="record.newArchitect !=null || record.similarArchitect !=null" type="button" class="btn btn-primary btn-sm" ng-click="addArchitect(record)">Add as new architect</button>
                     </td>
 
                   </tr>
