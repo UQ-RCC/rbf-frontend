@@ -505,13 +505,6 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
         projectList.push(JSON.stringify(project));
       });
       payload.projects = projectList;
-      
-      /* if (payload.$typologies !== null && angular.isDefined(payload.$typologies)) {
-        payload.typologies = [];
-        angular.forEach(payload.$typologies, function(typology) {
-          payload.typologies.push(typology.text);
-        });
-      } */
       var relationships = [];
       if (payload.$associatedFirm !== null && angular.isDefined(payload.$associatedFirm)) {
         angular.forEach(payload.$associatedFirm, function(firm) {
@@ -581,11 +574,7 @@ angular.module('qldarchApp').factory('ArchObj', function($http, $cacheFactory, $
               dataList.push(d);
               //return data;
             });
-          } /* else {
-            //return data;
-            toaster.pop('success', 'Error occured', response);
-
-          } */
+          }
 
         });
         

@@ -163,21 +163,21 @@ angular.module('qldarchApp').controller('StructureCtrl', function($scope, struct
 	});
 
     
-	$scope.updateBulkStructures = async function(data, $datafile) {
-		let jsonData = [];
+	$scope.updateBulkStructures = function(data, $datafile) {
+		var jsonData = [];
 		$scope.payload = angular.copy(data);
-		let rowsToDisplay = [];
+		var rowsToDisplay = [];
 		$scope.expData = false;
-
-		let fileName = $datafile[0].name;
-		let file = $datafile[0];
-		let projects = [];
+	
+		var fileName = $datafile[0].name;
+		var file = $datafile[0];
+		var projects = [];
 	
 		if (!file) {
 			toaster.pop('error', 'Please select a file');
 			return;
 		}
-
+	
 		if (fileName.endsWith(".xlsx") || fileName.endsWith(".xls")) {
 			var reader = new FileReader();
 			reader.onprogress = function(event) {
@@ -187,21 +187,21 @@ angular.module('qldarchApp').controller('StructureCtrl', function($scope, struct
 					$scope.$apply();
 				}
 			};
-
+	
 			reader.onloadstart = function(event) {
 				$scope.progress = 0;
 				$scope.$apply();
 			};
-
-			reader.onload = async function(e) {
+	
+			reader.onload = function(e) {
 				var data = new Uint8Array(e.target.result);
 				var workbook = XLSX.read(data, { type: 'array' });
 				var sheetName = workbook.SheetNames[0];
 				var worksheet = workbook.Sheets[sheetName];
 				jsonData = XLSX.utils.sheet_to_json(worksheet);
-
-				let confirmMdlJs = document.getElementById('mdl_confirmBox');
-				let ConfirmModal = new bootstrap.Modal(confirmMdlJs);
+	
+				var confirmMdlJs = document.getElementById('mdl_confirmBox');
+				var ConfirmModal = new bootstrap.Modal(confirmMdlJs);
 				if (jsonData.length > 0) {
 					$scope.iterateExcelObj = {
 						dataObj: jsonData,
@@ -209,182 +209,175 @@ angular.module('qldarchApp').controller('StructureCtrl', function($scope, struct
 						confirmMdl: ConfirmModal
 					};
 				}
-
-				await Promise.all(jsonData.map(async function(row, index) {
-					let params = {};
-					let rowNumber = index + 2;
-					params.row = rowNumber;
-					params.index = index;
-					let rowsToConfirm = {};
-
-					//let relationshipIds = [];
-					if (row.BuildingTypology != null)
-						params.typologies = row.BuildingTypology.trim();
-					if (row.BuildingName != null)
-						params.label = row.BuildingName.trim();
-
-					if (row.associateFirm != null) {
-						let firms = row.associateFirm.split(';');
-						await Promise.all(firms.map(async function(firm) {
-							let res = await ArchObj.loadSimilarity(firm.trim());
-							if (res != null) {
-								let firmsA = res.filter(firm => firm.type === 'firm');
-								let minDistance = Infinity;
-								let mostSimilarRecord = null;
-								
-								if (firmsA.length > 1) {
-									firmsA.forEach(function(record) {
-										let distance = Utils.levenshteinDistance(firm.trim().toLowerCase(), record.label.toLowerCase());
-										if (distance < minDistance) {
-											minDistance = distance;
-											mostSimilarRecord = record;
+	
+				var promises = jsonData.map(function(row, index) {
+					return new Promise(function(resolve) {
+						var params = {};
+						var rowNumber = index + 2;
+						params.row = rowNumber;
+						params.index = index;
+						var rowsToConfirm = {};
+	
+						var promises = [];
+	
+						if (row.associateFirm != null) {
+							var firms = row.associateFirm.split(';');
+							promises.push(Promise.all(firms.map(function(firm) {
+								return ArchObj.loadSimilarity(firm.trim()).then(function(res) {
+									if (res != null) {
+										var firmsA = res.filter(firm => firm.type === 'firm');
+										var minDistance = Infinity;
+										var mostSimilarRecord = null;
+	
+										if (firmsA.length > 1) {
+											firmsA.forEach(function(record) {
+												var distance = Utils.levenshteinDistance(firm.trim().toLowerCase(), record.label.toLowerCase());
+												if (distance < minDistance) {
+													minDistance = distance;
+													mostSimilarRecord = record;
+												}
+											});
+											rowsToConfirm.rowNumber = rowNumber;
+											rowsToConfirm.index = index;
+											rowsToConfirm.existingFirm = firm.trim();
+											rowsToConfirm.similarFirm = mostSimilarRecord;
+											rowsToConfirm.confirmed = false;
+										} else if (firmsA.length == 1) {
+											if (firmsA[0].label.trim().toLowerCase() === firm.trim().toLowerCase())
+												params.associateFirm = firmsA[0];
+											else {
+												rowsToConfirm.rowNumber = rowNumber;
+												rowsToConfirm.index = index;
+												rowsToConfirm.existingFirm = firm.trim();
+												rowsToConfirm.similarFirm = firmsA[0];
+												rowsToConfirm.confirmed = false;
+											}
+										} else {
+											rowsToConfirm.rowNumber = rowNumber;
+											rowsToConfirm.index = index;
+											rowsToConfirm.newFirm = firm;
+											rowsToConfirm.confirmed = false;
 										}
-									});
-									rowsToConfirm.rowNumber = rowNumber;
-									rowsToConfirm.index = index;
-									rowsToConfirm.existingFirm = firm.trim();
-									rowsToConfirm.similarFirm = mostSimilarRecord;
-									rowsToConfirm.confirmed = false;
-								} else if (firmsA.length == 1) {
-									//console.log("firmsA[0]")
-									//console.log(firmsA[0])
-									if (firmsA[0].label.trim().toLowerCase() === firm.trim().toLowerCase() )
-										params.associateFirm = firmsA[0]
-									else {
-										
+									} else {
 										rowsToConfirm.rowNumber = rowNumber;
 										rowsToConfirm.index = index;
-										rowsToConfirm.existingFirm = firm.trim();
-										rowsToConfirm.similarFirm = firmsA[0];
+										rowsToConfirm.newFirm = firm;
 										rowsToConfirm.confirmed = false;
 									}
-
-									//relationshipIds.push(firmsA[0].id);
-								} else {
-									rowsToConfirm.rowNumber = rowNumber;
-									rowsToConfirm.index = index;
-									rowsToConfirm.newFirm = firm;
-									rowsToConfirm.confirmed = false;
-								}
-							} else {
-								rowsToConfirm.rowNumber = rowNumber;
-								rowsToConfirm.index = index;
-								rowsToConfirm.newFirm = firm;
-								rowsToConfirm.confirmed = false;
-							}
-						}));
-					}
-
-					if (row.associateArchitect != null) {
-						let architects = row.associateArchitect.split(';');
-						await Promise.all(architects.map(async function(architect) {
-							let res = await ArchObj.loadSimilarity(architect.trim());
-							if (res != null) {
-								let architectA = res.filter(obj => obj.type === 'person');
-								let minDistance = Infinity;
-								let mostSimilarRecord = null;
-								if (architectA.length > 1) {
-									architectA.forEach(function(record) {
-										let distance = Utils.levenshteinDistance(architect.trim().toLowerCase(), record.label.toLowerCase());
-										if (distance < minDistance) {
-											minDistance = distance;
-											mostSimilarRecord = record;
+								});
+							})));
+						}
+	
+						if (row.associateArchitect != null) {
+							var architects = row.associateArchitect.split(';');
+							promises.push(Promise.all(architects.map(function(architect) {
+								return ArchObj.loadSimilarity(architect.trim()).then(function(res) {
+									if (res != null) {
+										var architectA = res.filter(obj => obj.type === 'person');
+										var minDistance = Infinity;
+										var mostSimilarRecord = null;
+	
+										if (architectA.length > 1) {
+											architectA.forEach(function(record) {
+												var distance = Utils.levenshteinDistance(architect.trim().toLowerCase(), record.label.toLowerCase());
+												if (distance < minDistance) {
+													minDistance = distance;
+													mostSimilarRecord = record;
+												}
+											});
+											rowsToConfirm.rowNumber = rowNumber;
+											rowsToConfirm.index = index;
+											rowsToConfirm.existingArchitect = architect.trim();
+											rowsToConfirm.similarArchitect = mostSimilarRecord;
+											rowsToConfirm.confirmed = false;
+										} else if (architectA.length == 1) {
+											if (architectA[0].label.trim().toLowerCase() === architect.trim().toLowerCase())
+												params.associateArchitect = architectA[0];
+											else {
+												rowsToConfirm.rowNumber = rowNumber;
+												rowsToConfirm.index = index;
+												rowsToConfirm.existingArchitect = architect.trim();
+												rowsToConfirm.similarArchitect = architectA[0];
+												rowsToConfirm.confirmed = false;
+											}
+										} else {
+											rowsToConfirm.rowNumber = rowNumber;
+											rowsToConfirm.index = index;
+											rowsToConfirm.newArchitect = architect;
+											rowsToConfirm.confirmed = false;
 										}
-									});
-									rowsToConfirm.rowNumber = rowNumber;
-									rowsToConfirm.index = index;
-									rowsToConfirm.existingArchitect = architect.trim();
-									rowsToConfirm.similarArchitect = mostSimilarRecord;
-									rowsToConfirm.confirmed = false;
-								} else if (architectA.length == 1) {
-									//relationshipIds.push(architectA[0].id);
-									//console.log("architectA[0]")
-									//console.log(architectA[0])
-									if (architectA[0].label.trim().toLowerCase() === architect.trim().toLowerCase() )
-										params.associateArchitect = architectA[0]
-									else {
-										
+									} else {
 										rowsToConfirm.rowNumber = rowNumber;
 										rowsToConfirm.index = index;
-										rowsToConfirm.existingArchitect =  architect.trim();
-										rowsToConfirm.similarArchitect = architectA[0];
+										rowsToConfirm.newArchitect = architect;
 										rowsToConfirm.confirmed = false;
 									}
-								} else {
-									rowsToConfirm.rowNumber = rowNumber;
-									rowsToConfirm.index = index;
-									rowsToConfirm.newArchitect = architect;
-									rowsToConfirm.confirmed = false;
-								}
-							} else {
-								rowsToConfirm.rowNumber = rowNumber;
-								rowsToConfirm.index = index;
-								rowsToConfirm.newArchitect = architect;
-								rowsToConfirm.confirmed = false;
+								});
+							})));
+						}
+	
+						if (row.BuildingTypology != null)
+							params.typologies = row.BuildingTypology.trim();
+						if (row.BuildingName != null)
+							params.label = row.BuildingName.trim();
+						if (row.StitchedAddress != null)
+							params.location = row.StitchedAddress.trim();
+						if (row.Latitude != null)
+							params.latitude = row.Latitude;
+						if (row.Longitude != null)
+							params.longitude = row.Longitude;
+						if (row.australian != null)
+							params.australian = row.australian;
+						if (row.completion != null) {
+							var completionDate = new Date(row.completion.trim());
+							params.completion = completionDate;
+						}
+						if (row.demolished != null)
+							params.demolished = row.demolished;
+						if (row.summary != null)
+							params.summary = row.summary.trim();
+	
+						projects.push(params);
+	
+						Promise.all(promises).then(function() {
+							if (Object.keys(rowsToConfirm).length != 0) {
+								rowsToDisplay.push(rowsToConfirm);
 							}
-						}));
+							resolve();
+						});
+					});
+				});
+	
+				Promise.all(promises).then(function() {
+					$scope.payload.projects = projects;
+	
+					if (rowsToDisplay != null) {
+						$scope.records = rowsToDisplay;
+						$scope.iterateExcelObj.confirmMdl.show();
 					}
-
-					if (row.StitchedAddress != null)
-						params.location = row.StitchedAddress.trim();
-					if (row.Latitude != null)
-						params.latitude = row.Latitude;
-					if (row.Longitude != null)
-						params.longitude = row.Longitude;
-					if (row.australian != null)
-						params.australian = row.australian;
-					if (row.completion != null) {
-						var completionDate = new Date(row.completion.trim());
-						params.completion = completionDate;
-					}
-					if (row.demolished != null)
-						params.demolished = row.demolished;
-					if (row.summary != null)
-						params.summary = row.summary.trim();
-
-					projects.push(params);
-					//relationships.push(relationshipIds);
-					
-					//console.log(rowsToConfirm)
-					if(Object.keys(rowsToConfirm) !=0) {
-						rowsToDisplay.push(rowsToConfirm);
-						//console.log(Object.keys(rowsToConfirm))
-
-					}
-					
-				}));
-
-				$scope.payload.projects = projects;
-				
-				if (rowsToDisplay != null ) {
-					
-					$scope.records = rowsToDisplay
-					$scope.iterateExcelObj.confirmMdl.show();
-				}
-				
-				$scope.progress = 100;
-				$scope.$apply();
+	
+					$scope.progress = 100;
+					$scope.$apply();
+				});
 			};
-
+	
 			reader.onerror = function(event) {
 				alert('Error reading file.');
 				$scope.progress = 0;
 				$scope.expData = false;
 				$scope.$apply();
 			};
-
+	
 			reader.readAsArrayBuffer(file);
-			
+	
 		} else {
 			toaster.pop('error', 'Incorrect file type');
 		}
 	};
-    
+	
 
 	$scope.updateArchitect = function (record) {
-	//console.log("update architect")
-	//let foundRecord = $scope.payload.projects.find(project => project.index === record.index);
-		let recordIndex = $scope.payload.projects.findIndex(project => project.index === record.index)
+		var recordIndex = $scope.payload.projects.findIndex(project => project.index === record.index)
 		if (record.similarArchitect ) {
 			//console.log("$scope.architect")
 			$scope.payload.projects[recordIndex].associateArchitect = record.similarArchitect
@@ -393,39 +386,33 @@ angular.module('qldarchApp').controller('StructureCtrl', function($scope, struct
 			$scope.updateConfirm(record) 
 			//$scope.checkAllConfirmed(record)
 		}
-		/* console.log(record)
-		console.log($scope.payload) */
 
 	};
 
 	$scope.updateFirm = function (record) {
-		let recordIndex = $scope.payload.projects.findIndex(project => project.index === record.index)
+		var recordIndex = $scope.payload.projects.findIndex(project => project.index === record.index)
 		
 		if(record.similarFirm) {
 			$scope.payload.projects[recordIndex].associateFirm = record.similarFirm
-			/* console.log(record)
-			console.log("$scope.payload")
-			console.log($scope.payload) */
-			//assign the values to found records
 			record.firmConfirmed = true; 
 			$scope.updateConfirm(record) 
 		} 
 	};
 
 	$scope.addFirm = async function(record) {
-		let recordIndex = $scope.payload.projects.findIndex(project => project.index === record.index)
+		var recordIndex = $scope.payload.projects.findIndex(project => project.index === record.index)
 		if(record.newFirm || record.existingFirm) {
-			let firm = {}
+			var firm = {}
 			firm.type = "firm"
 			if (record.newFirm) 
 				firm.label = record.newFirm.trim()
 			else if (record.existingFirm)
 				firm.label = record.existingFirm.trim()
 
-			let res = await ArchObj.createFirm(firm)
+			var res = await ArchObj.createFirm(firm)
 			//console.log(res)
 			if (res !=null) {
-				let newfirm = {
+				var newfirm = {
 					id: res.id,
 					label: res.label,
 					type: res.type
@@ -439,9 +426,9 @@ angular.module('qldarchApp').controller('StructureCtrl', function($scope, struct
 	};
 
 	$scope.addArchitect = async function(record) {
-		let recordIndex = $scope.payload.projects.findIndex(project => project.index === record.index)
+		var recordIndex = $scope.payload.projects.findIndex(project => project.index === record.index)
 		if (record.newArchitect || record.existingArchitect) {
-			let architect = {}
+			var architect = {}
 			architect.type = "person"
 			
 			if (record.newArchitect) 
@@ -449,10 +436,10 @@ angular.module('qldarchApp').controller('StructureCtrl', function($scope, struct
 			if (record.existingArchitect)
 				architect.label = record.existingArchitect
 
-			let response = await ArchObj.createArchitect(architect)
+			var response = await ArchObj.createArchitect(architect)
 			//console.log(response)
 			if (response!=null) {
-				let newarchitect = {
+				var newarchitect = {
 					id: response.id,
 					label: response.label,
 					type: response.type
@@ -467,7 +454,7 @@ angular.module('qldarchApp').controller('StructureCtrl', function($scope, struct
 
 	$scope.updateConfirm = function (record) {
 		console.log($scope.records)
-		let recordIndex = $scope.records.findIndex(srecord => srecord.index === record.index)
+		var recordIndex = $scope.records.findIndex(srecord => srecord.index === record.index)
 		//console.log(recordIndex)
 		if ((record.similarFirm || record.newFirm) && (record.similarArchitect ||record.newArchitect)) {
 			if( record.firmConfirmed && record.architectConfirmed ){
@@ -493,8 +480,8 @@ angular.module('qldarchApp').controller('StructureCtrl', function($scope, struct
 
     $scope.checkAllConfirmed = async function() {
 		console.log("within chek all")
-		let promises = [];
-		let promise
+		var promises = [];
+		var promise
 		var allConfirmed = $scope.records.every(function(record) {
 			console.log(record)
           	return record.confirmed;
