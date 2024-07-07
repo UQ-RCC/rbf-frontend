@@ -225,7 +225,9 @@ angular.module('qldarchApp').controller('StructureCtrl', function($scope, struct
 							promises.push(Promise.all(firms.map(function(firm) {
 								return ArchObj.loadSimilarity(firm.trim()).then(function(res) {
 									if (res != null) {
-										var firmsA = res.filter(firm => firm.type === 'firm');
+										var firmsA = res.filter(function(firm) {
+											return firm.type === 'firm'
+										});
 										var minDistance = Infinity;
 										var mostSimilarRecord = null;
 	
@@ -273,7 +275,9 @@ angular.module('qldarchApp').controller('StructureCtrl', function($scope, struct
 							promises.push(Promise.all(architects.map(function(architect) {
 								return ArchObj.loadSimilarity(architect.trim()).then(function(res) {
 									if (res != null) {
-										var architectA = res.filter(obj => obj.type === 'person');
+										var architectA = res.filter(function(obj) {
+											return obj.type === 'person';
+										});
 										var minDistance = Infinity;
 										var mostSimilarRecord = null;
 	
@@ -377,7 +381,11 @@ angular.module('qldarchApp').controller('StructureCtrl', function($scope, struct
 	
 
 	$scope.updateArchitect = function (record) {
-		var recordIndex = $scope.payload.projects.findIndex(project => project.index === record.index)
+		//var recordIndex = $scope.payload.projects.findIndex(project => project.index === record.index)
+		var recordIndex = $scope.payload.projects.findIndex(function(project) {
+			return project.index === record.index;
+		  });
+		  
 		if (record.similarArchitect ) {
 			//console.log("$scope.architect")
 			$scope.payload.projects[recordIndex].associateArchitect = record.similarArchitect
@@ -390,7 +398,11 @@ angular.module('qldarchApp').controller('StructureCtrl', function($scope, struct
 	};
 
 	$scope.updateFirm = function (record) {
-		var recordIndex = $scope.payload.projects.findIndex(project => project.index === record.index)
+		//var recordIndex = $scope.payload.projects.findIndex(project => project.index === record.index)
+		var recordIndex = $scope.payload.projects.findIndex(function(project) {
+			return project.index === record.index;
+		  });
+		  
 		
 		if(record.similarFirm) {
 			$scope.payload.projects[recordIndex].associateFirm = record.similarFirm
@@ -399,8 +411,12 @@ angular.module('qldarchApp').controller('StructureCtrl', function($scope, struct
 		} 
 	};
 
-	$scope.addFirm = async function(record) {
-		var recordIndex = $scope.payload.projects.findIndex(project => project.index === record.index)
+	$scope.addFirm = function(record) {
+		//var recordIndex = $scope.payload.projects.findIndex(project => project.index === record.index)
+		var recordIndex = $scope.payload.projects.findIndex(function(project) {
+			return project.index === record.index;
+		  });
+		  
 		if(record.newFirm || record.existingFirm) {
 			var firm = {}
 			firm.type = "firm"
@@ -409,7 +425,7 @@ angular.module('qldarchApp').controller('StructureCtrl', function($scope, struct
 			else if (record.existingFirm)
 				firm.label = record.existingFirm.trim()
 
-			var res = await ArchObj.createFirm(firm)
+			/* var res = await ArchObj.createFirm(firm)
 			//console.log(res)
 			if (res !=null) {
 				var newfirm = {
@@ -420,13 +436,32 @@ angular.module('qldarchApp').controller('StructureCtrl', function($scope, struct
 				$scope.payload.projects[recordIndex].associateFirm = newfirm
 			}
 			record.firmConfirmed = true;
-			$scope.updateConfirm(record) 
+			$scope.updateConfirm(record)  */
+			ArchObj.createFirm(firm).then(function(res){
+
+				if (res !=null) {
+				  var newfirm = {
+					id: res.id,
+					label: res.label,
+					type: res.type
+				  };
+				  $scope.payload.projects[recordIndex].associateFirm = newfirm
+				}
+				record.firmConfirmed = true;
+				$scope.updateConfirm(record) 
+			  }).catch(function(error) {
+				console.error("Error creating firm:", error);
+			  });
 			
 		}
 	};
 
-	$scope.addArchitect = async function(record) {
-		var recordIndex = $scope.payload.projects.findIndex(project => project.index === record.index)
+	$scope.addArchitect = function(record) {
+		//var recordIndex = $scope.payload.projects.findIndex(project => project.index === record.index)
+		var recordIndex = $scope.payload.projects.findIndex(function(project) {
+			return project.index === record.index;
+		  });
+		  
 		if (record.newArchitect || record.existingArchitect) {
 			var architect = {}
 			architect.type = "person"
@@ -436,7 +471,7 @@ angular.module('qldarchApp').controller('StructureCtrl', function($scope, struct
 			if (record.existingArchitect)
 				architect.label = record.existingArchitect
 
-			var response = await ArchObj.createArchitect(architect)
+			/* var response = await ArchObj.createArchitect(architect)
 			//console.log(response)
 			if (response!=null) {
 				var newarchitect = {
@@ -447,14 +482,33 @@ angular.module('qldarchApp').controller('StructureCtrl', function($scope, struct
 				$scope.payload.projects[recordIndex].associateArchitect = newarchitect;
 			}
 			record.architectConfirmed = true;
-			$scope.updateConfirm(record) 
+			$scope.updateConfirm(record)  */
+
+			ArchObj.createArchitect(architect).then(function(response) {
+				if (response!=null) {
+					var newarchitect = {
+						id: response.id,
+						label: response.label,
+						type: response.type
+					};
+					$scope.payload.projects[recordIndex].associateArchitect = newarchitect;
+				}
+				record.architectConfirmed = true;
+				$scope.updateConfirm(record)
+			}).catch(function(error){
+				console.error("Error creating architect: ",error)
+			});
 			
 		}
 	};
 
 	$scope.updateConfirm = function (record) {
 		console.log($scope.records)
-		var recordIndex = $scope.records.findIndex(srecord => srecord.index === record.index)
+		//var recordIndex = $scope.records.findIndex(srecord => srecord.index === record.index)
+		var recordIndex = $scope.records.findIndex(function(srecord) {
+			return srecord.index === record.index;
+		  });
+		  
 		//console.log(recordIndex)
 		if ((record.similarFirm || record.newFirm) && (record.similarArchitect ||record.newArchitect)) {
 			if( record.firmConfirmed && record.architectConfirmed ){
@@ -478,7 +532,7 @@ angular.module('qldarchApp').controller('StructureCtrl', function($scope, struct
 		$scope.checkAllConfirmed();
 	};
 
-    $scope.checkAllConfirmed = async function() {
+    $scope.checkAllConfirmed = function() {
 		console.log("within chek all")
 		var promises = [];
 		var promise
