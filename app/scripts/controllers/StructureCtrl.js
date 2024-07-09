@@ -2,10 +2,11 @@
 
 angular.module('qldarchApp').controller('StructureCtrl', function($scope, structure, designers, ArchObj, firms, architects, $filter, buildingTypologies, $state, $q, $stateParams, Utils, toaster, ngProgress) {
       /* globals $:false */
+	
 	$scope.structure = structure;
 	$scope.designers = designers;
 	$scope.dropSupported = true;
-	$scope.iterateExcelObj = {};
+	//$scope.iterateExcelObj = {};
 	$scope.records=null;
 	$scope.payload = {};
       
@@ -200,7 +201,7 @@ angular.module('qldarchApp').controller('StructureCtrl', function($scope, struct
 				var worksheet = workbook.Sheets[sheetName];
 				jsonData = XLSX.utils.sheet_to_json(worksheet);
 	
-				var confirmMdlJs = document.getElementById('mdl_confirmBox');
+				/* var confirmMdlJs = document.getElementById('mdl_confirmBox');
 				var ConfirmModal = new bootstrap.Modal(confirmMdlJs);
 				if (jsonData.length > 0) {
 					$scope.iterateExcelObj = {
@@ -208,7 +209,7 @@ angular.module('qldarchApp').controller('StructureCtrl', function($scope, struct
 						index: 0,
 						confirmMdl: ConfirmModal
 					};
-				}
+				} */
 	
 				var promises = jsonData.map(function(row, index) {
 					return new Promise(function(resolve) {
@@ -357,7 +358,8 @@ angular.module('qldarchApp').controller('StructureCtrl', function($scope, struct
 	
 					if (rowsToDisplay != null) {
 						$scope.records = rowsToDisplay;
-						$scope.iterateExcelObj.confirmMdl.show();
+						//$scope.iterateExcelObj.confirmMdl.show();
+						$('#mdl_confirmBox').modal('show')
 					}
 	
 					$scope.progress = 100;
@@ -543,7 +545,8 @@ angular.module('qldarchApp').controller('StructureCtrl', function($scope, struct
         console.log(allConfirmed)
         //console.log("allConfirmed")
         if (allConfirmed) {
-			$scope.iterateExcelObj.confirmMdl.hide();
+			//$scope.iterateExcelObj.confirmMdl.hide();
+			$('#mdl_confirmBox').modal('hide');
 			//send the project to backend for bulk update
 			ngProgress.reset();
 			ngProgress.color('#ea1d5d');
