@@ -510,10 +510,10 @@ angular.module('qldarchApp').controller('StructureCtrl', function($scope, struct
 			return srecord.index === record.index;
 		  });
 		  
-		//console.log(recordIndex)
+		
 		if ((record.similarFirm || record.newFirm) && (record.similarArchitect ||record.newArchitect)) {
 			if( record.firmConfirmed && record.architectConfirmed ){
-				//console.log("first condi")
+				
 				$scope.records[recordIndex].confirmed = true;
 			}
 			
