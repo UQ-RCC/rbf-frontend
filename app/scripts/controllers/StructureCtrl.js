@@ -390,10 +390,10 @@ angular.module('qldarchApp').controller('StructureCtrl', function($scope, struct
 		  
 		if (record.similarArchitect ) {
 			$scope.payload.projects[recordIndex].associateArchitect = record.similarArchitect
-			//console.log($scope.payload)
+			
 			record.architectConfirmed = true;
 			$scope.updateConfirm(record) 
-			//$scope.checkAllConfirmed(record)
+			
 		}
 
 	};
