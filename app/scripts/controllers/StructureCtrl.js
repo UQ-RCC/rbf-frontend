@@ -9,6 +9,15 @@ angular.module('qldarchApp').controller('StructureCtrl', function($scope, struct
 	//$scope.iterateExcelObj = {};
 	$scope.records=null;
 	$scope.payload = {};
+	$scope.processing =false;
+
+	//DropZone file handling
+	$scope.$datafile =[];
+	$scope.$watch('$datafile', function( files) {
+        if (files && files.length) {
+            $scope.updateBulkStructures($scope.structure, files);
+        }
+    });
       
      
       /*
@@ -551,6 +560,7 @@ angular.module('qldarchApp').controller('StructureCtrl', function($scope, struct
 			ngProgress.reset();
 			ngProgress.color('#ea1d5d');
 			ngProgress.start();
+			$scope.processing =true;
 			promise =  ArchObj.createBulkStructures($scope.payload).then(function(res) {
 			console.log("res")
 			console.log(res)

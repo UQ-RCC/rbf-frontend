@@ -192,8 +192,8 @@
               </div>
             </div>
           </div>
-          <button type="submit" class="btn btn-primary" ng-disabled="form.$invalid ||!$datafile">Save</button>
-          <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
+          <!-- <button type="submit" class="btn btn-primary" ng-disabled="form.$invalid ||!$datafile ||processing">Save</button> -->
+          <button type="button" class="btn btn-default" ng-click="cancel()" ng-disabled="processing">Cancel</button>
         </form>
       </div>
     </div>
