@@ -383,7 +383,6 @@ angular.module('qldarchApp').controller('StructureCtrl', function($scope, struct
 	
 					if (rowsToDisplay != null && rowsToDisplay.length > 0) {
 						$scope.records = rowsToDisplay;
-						//$scope.iterateExcelObj.confirmMdl.show();
 						$('#mdl_confirmBox').modal('show')
 					} else {
 						var promises = [];
