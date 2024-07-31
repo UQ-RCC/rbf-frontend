@@ -11,6 +11,7 @@ angular.module('qldarchApp').controller('StructureCtrl', function($scope, struct
 	$scope.payload = {};
 	$scope.processing =false;
 
+
 	//DropZone file handling
 	$scope.$datafile =[];
 	$scope.$watch('$datafile', function( files) {
@@ -254,27 +255,34 @@ angular.module('qldarchApp').controller('StructureCtrl', function($scope, struct
 											rowsToConfirm.existingFirm = firm.trim();
 											rowsToConfirm.similarFirm = mostSimilarRecord;
 											rowsToConfirm.confirmed = false;
+											
 										} else if (firmsA.length == 1) {
-											if (firmsA[0].label.trim().toLowerCase() === firm.trim().toLowerCase())
+											if (firmsA[0].label.trim().toLowerCase() === firm.trim().toLowerCase()){
+
 												params.associateFirm = firmsA[0];
+												
+											}
 											else {
 												rowsToConfirm.rowNumber = rowNumber;
 												rowsToConfirm.index = index;
 												rowsToConfirm.existingFirm = firm.trim();
 												rowsToConfirm.similarFirm = firmsA[0];
 												rowsToConfirm.confirmed = false;
+												
 											}
 										} else {
 											rowsToConfirm.rowNumber = rowNumber;
 											rowsToConfirm.index = index;
 											rowsToConfirm.newFirm = firm;
 											rowsToConfirm.confirmed = false;
+											
 										}
 									} else {
 										rowsToConfirm.rowNumber = rowNumber;
 										rowsToConfirm.index = index;
 										rowsToConfirm.newFirm = firm;
 										rowsToConfirm.confirmed = false;
+										
 									}
 								});
 							})));
@@ -304,27 +312,34 @@ angular.module('qldarchApp').controller('StructureCtrl', function($scope, struct
 											rowsToConfirm.existingArchitect = architect.trim();
 											rowsToConfirm.similarArchitect = mostSimilarRecord;
 											rowsToConfirm.confirmed = false;
+											
 										} else if (architectA.length == 1) {
-											if (architectA[0].label.trim().toLowerCase() === architect.trim().toLowerCase())
+											if (architectA[0].label.trim().toLowerCase() === architect.trim().toLowerCase()){
+
 												params.associateArchitect = architectA[0];
+												
+											}
 											else {
 												rowsToConfirm.rowNumber = rowNumber;
 												rowsToConfirm.index = index;
 												rowsToConfirm.existingArchitect = architect.trim();
 												rowsToConfirm.similarArchitect = architectA[0];
 												rowsToConfirm.confirmed = false;
+												
 											}
 										} else {
 											rowsToConfirm.rowNumber = rowNumber;
 											rowsToConfirm.index = index;
 											rowsToConfirm.newArchitect = architect;
 											rowsToConfirm.confirmed = false;
+											
 										}
 									} else {
 										rowsToConfirm.rowNumber = rowNumber;
 										rowsToConfirm.index = index;
 										rowsToConfirm.newArchitect = architect;
 										rowsToConfirm.confirmed = false;
+										
 									}
 								});
 							})));
@@ -364,11 +379,39 @@ angular.module('qldarchApp').controller('StructureCtrl', function($scope, struct
 	
 				Promise.all(promises).then(function() {
 					$scope.payload.projects = projects;
+					console.log(rowsToDisplay)
 	
-					if (rowsToDisplay != null) {
+					if (rowsToDisplay != null && rowsToDisplay.length > 0) {
 						$scope.records = rowsToDisplay;
 						//$scope.iterateExcelObj.confirmMdl.show();
 						$('#mdl_confirmBox').modal('show')
+					} else {
+						var promises = [];
+						var promise
+						ngProgress.reset();
+						ngProgress.color('#ea1d5d');
+						ngProgress.start();
+						$scope.processing =true;
+						promise =  ArchObj.createBulkStructures($scope.payload).then(function(res) {
+						console.log("res")
+						console.log(res)
+						return res;
+
+						}).catch(function(error) {
+						/* console.log("error in promise")   
+						console.log(error)  */  
+						$state.go('structure.summary.bulk');
+						return error;
+						});
+						promises.push(promise);
+						console.log("in staructureCtl") 
+
+						$q.all(promises).then (function () {
+							ngProgress.complete();
+							ngProgress.reset();
+							console.log("in else structure ctl")
+							$state.go('structures.australian');
+						})
 					}
 	
 					$scope.progress = 100;
