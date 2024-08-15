@@ -1,7 +1,7 @@
-qldarch-frontend
+rbf-frontend
 ==================
 
-Running the Front End locally (pointing at qldarch server)
+Running the Front End locally (pointing at rbf server)
 -----
 
 # Setting up
